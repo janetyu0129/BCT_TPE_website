@@ -507,13 +507,18 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
 }
 .logos-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
 .logos-wrap::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
-.logo-track{display:flex;animation:marquee 26s linear infinite;width:max-content}
+.logo-track{display:flex;align-items:center;animation:marquee 26s linear infinite;width:max-content}
 .logo-it{
   padding:0 56px;border-right:1px solid var(--border);
-  font-size:16px;font-weight:700;color:var(--faint);letter-spacing:-0.5px;white-space:nowrap;
-  transition:color 0.2s;
+  display:flex;align-items:center;
 }
-.logo-it:hover{color:var(--dim)}
+.logo-it img{
+  height:28px;width:auto;
+  filter:brightness(0) invert(1);
+  opacity:0.35;
+  transition:opacity 0.2s;
+}
+.logo-it:hover img{opacity:0.65}
 
 /* ── CULTURE ── */
 .culture-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
@@ -884,10 +889,16 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
 <!-- LOGOS -->
 <div class="logos-wrap">
   <div class="logo-track">
-    <div class="logo-it">GIANT</div><div class="logo-it">Dynamic Cycling Fit</div>
-    <div class="logo-it">FLIR</div><div class="logo-it">NOVA</div><div class="logo-it">dropthought</div>
-    <div class="logo-it">GIANT</div><div class="logo-it">Dynamic Cycling Fit</div>
-    <div class="logo-it">FLIR</div><div class="logo-it">NOVA</div><div class="logo-it">dropthought</div>
+    <div class="logo-it"><img src="uploads/img_logo_giant.png" alt="GIANT"></div>
+    <div class="logo-it"><img src="uploads/img_logo_dcf.png" alt="Dynamic Cycling Fit"></div>
+    <div class="logo-it"><img src="uploads/img_logo_flir.png" alt="FLIR"></div>
+    <div class="logo-it"><img src="uploads/img_logo_nova.png" alt="NOVA"></div>
+    <div class="logo-it"><img src="uploads/img_logo_dropthought.png" alt="dropthought"></div>
+    <div class="logo-it"><img src="uploads/img_logo_giant.png" alt="GIANT"></div>
+    <div class="logo-it"><img src="uploads/img_logo_dcf.png" alt="Dynamic Cycling Fit"></div>
+    <div class="logo-it"><img src="uploads/img_logo_flir.png" alt="FLIR"></div>
+    <div class="logo-it"><img src="uploads/img_logo_nova.png" alt="NOVA"></div>
+    <div class="logo-it"><img src="uploads/img_logo_dropthought.png" alt="dropthought"></div>
   </div>
 </div>
 
