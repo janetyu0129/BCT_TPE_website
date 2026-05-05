@@ -138,7 +138,6 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
   grid-template-columns:1fr 1fr;
   align-items:center;
   gap:60px;
-  position:relative;z-index:1;
 }
 
 /* hero left column — left align */
@@ -599,23 +598,6 @@ footer{
 .footer-btm{display:flex;justify-content:space-between;align-items:center}
 .f-copy,.f-parent{font-size:12px;color:var(--faint)}
 
-/* ── HERO 3D PARTICLE BG ── */
-.hero-3d-bg{
-  position:absolute;inset:0;
-  pointer-events:none;z-index:0;
-  display:flex;align-items:center;justify-content:flex-end;
-  overflow:hidden;
-}
-.hero-3d-bg img{
-  width:60%;max-width:700px;height:auto;
-  opacity:0.55;
-  mix-blend-mode:screen;
-  filter:hue-rotate(0deg) saturate(1.4) brightness(1.1);
-  animation:floatBg 12s ease-in-out infinite alternate;
-  pointer-events:none;
-}
-@keyframes floatBg{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-24px) scale(1.04)}}
-
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease}
 .reveal.in{opacity:1;transform:none}
@@ -673,9 +655,6 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-3d-bg">
-    <img src="uploads/hero-particles.png" alt="">
-  </div>
   <div class="hero-inner">
   <!-- LEFT: text -->
   <div>
