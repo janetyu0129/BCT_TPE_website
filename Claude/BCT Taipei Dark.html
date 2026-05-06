@@ -110,6 +110,47 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
   padding:8px 16px;border-radius:50px;transition:color 0.2s,background 0.2s;
 }
 .nav-links a:hover{color:white;background:rgba(255,255,255,0.05)}
+.nav-work-wrap{position:relative}
+.nav-work-btn{
+  font-family:inherit;font-size:14px;font-weight:500;
+  color:var(--dim);background:none;border:none;cursor:pointer;
+  padding:8px 16px;border-radius:50px;
+  display:flex;align-items:center;gap:5px;
+  transition:color 0.2s,background 0.2s;
+}
+.nav-work-btn svg{transition:transform 0.2s}
+.nav-work-wrap:hover .nav-work-btn,
+.nav-work-wrap.open .nav-work-btn{color:white;background:rgba(255,255,255,0.05)}
+.nav-work-wrap:hover .nav-work-btn svg,
+.nav-work-wrap.open .nav-work-btn svg{transform:rotate(180deg)}
+.nav-dropdown{
+  position:absolute;top:100%;
+  left:50%;transform:translateX(-50%) translateY(-4px);
+  background:rgba(4,5,13,0.6);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:18px;
+  padding:18px 0 8px;min-width:190px;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity 0.18s ease,transform 0.18s ease,visibility 0.18s;
+  z-index:300;
+}
+.nav-work-wrap:hover .nav-dropdown,
+.nav-work-wrap.open .nav-dropdown{
+  opacity:1;visibility:visible;pointer-events:all;
+  transform:translateX(-50%) translateY(0);
+}
+.nav-dropdown a{
+  display:block;text-align:center;
+  padding:13px 20px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;font-weight:500;
+  color:rgba(255,255,255,0.45);
+  text-decoration:none;white-space:nowrap;
+  transition:color 0.15s,background 0.15s;
+  border-radius:10px;margin:0 6px;
+}
+.nav-dropdown a:hover{color:#fff;background:rgba(255,255,255,0.06)}
 .nav-btn{
   background:linear-gradient(135deg,var(--blue),var(--violet));
   color:white;font-family:'Space Grotesk',sans-serif;
@@ -234,6 +275,7 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
   border:1px solid rgba(255,255,255,0.1);
   border-radius:18px;
   box-shadow:0 24px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.04);
+  z-index:2;
 }
 .hcard-main{
   width:280px;padding:20px;
@@ -286,6 +328,7 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
   background:radial-gradient(circle,rgba(37,99,235,0.18) 0%,transparent 70%);
   pointer-events:none;
 }
+
 
 /* bar fill animation */
 @keyframes barGrow{from{width:0}to{width:var(--w)}}
@@ -414,11 +457,13 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
 .svc-name{font-size:17px;font-weight:700;color:white;margin-bottom:10px;line-height:1.3}
 .svc-desc{font-size:13px;line-height:1.75;color:var(--dim)}
 .svc-cta{
-  display:none;align-items:center;gap:6px;
+  display:flex;align-items:center;gap:6px;
   font-size:12px;font-weight:600;color:var(--cyan);
   margin-top:18px;text-decoration:none;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.2s;
 }
-.svc:hover .svc-cta{display:flex}
+.svc:hover .svc-cta{opacity:1;pointer-events:auto}
 
 /* ── PROCESS ── */
 .proc-grid{
@@ -648,7 +693,20 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
     <a href="#about">About</a>
     <a href="#services">Services</a>
     <a href="#process">Process</a>
-    <a href="#cases">Work</a>
+    <div class="nav-work-wrap" id="navWorkWrap">
+      <button class="nav-work-btn" aria-haspopup="true" aria-expanded="false">
+        Work
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2,4 6,8 10,4"/>
+        </svg>
+      </button>
+      <div class="nav-dropdown" role="menu">
+        <a href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer" role="menuitem">NOVA</a>
+        <a href="fitting.html" role="menuitem">Dynamic Cycling Fit</a>
+        <a href="#" role="menuitem">FLIR</a>
+        <a href="https://ycc-bct.github.io/bct-taipei-website/gac.html" target="_blank" rel="noopener noreferrer" role="menuitem">GAC</a>
+      </div>
+    </div>
   </div>
   <a href="#cta" class="nav-btn">Contact Us</a>
 </nav>
@@ -868,15 +926,15 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
       <a href="#" class="cases-link">View all projects →</a>
     </div>
     <div class="cases-grid reveal">
-      <div class="case-card">
+      <a class="case-card" href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:flex;flex-direction:column;">
         <div class="case-img"><img src="uploads/NOVA.png" alt="NOVA Platform" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block"/></div>
-        <div class="case-info"><div class="case-tag">NOVA</div><div class="case-name">Dynamic Cycling Fit Platform</div><a href="#" class="case-go">Explore more →</a></div>
-      </div>
+        <div class="case-info"><div class="case-tag">NOVA</div><div class="case-name">Dynamic Cycling Fit Platform</div><span class="case-go">Explore more →</span></div>
+      </a>
       <div class="cases-right">
-        <div class="case-card">
+        <a class="case-card" href="fitting.html" style="text-decoration:none;display:flex;flex-direction:column;">
           <div class="case-img" style="min-height:150px"><img src="assets/case_dcf.png" alt="DCF" loading="lazy"/></div>
-          <div class="case-info"><div class="case-tag">Giant</div><div class="case-name">Dynamic Cycling Fit</div><a href="#" class="case-go">Explore more →</a></div>
-        </div>
+          <div class="case-info"><div class="case-tag">Giant</div><div class="case-name">Dynamic Cycling Fit</div><span class="case-go">Explore more →</span></div>
+        </a>
         <div class="case-card">
           <div class="case-img" style="min-height:150px"><img src="assets/case_datalake.png" alt="DataLake" loading="lazy"/></div>
           <div class="case-info"><div class="case-tag">Enterprise</div><div class="case-name">DataLake Platform</div><a href="#" class="case-go">Explore more →</a></div>
@@ -967,6 +1025,18 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
 // Nav scroll
 const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>80),{passive:true});
+
+// Work dropdown
+const navWorkWrap=document.getElementById('navWorkWrap');
+navWorkWrap.querySelector('.nav-work-btn').addEventListener('click',e=>{
+  e.stopPropagation();
+  const open=navWorkWrap.classList.toggle('open');
+  navWorkWrap.querySelector('.nav-work-btn').setAttribute('aria-expanded',open);
+});
+document.addEventListener('click',()=>{
+  navWorkWrap.classList.remove('open');
+  navWorkWrap.querySelector('.nav-work-btn').setAttribute('aria-expanded',false);
+});
 
 // Reveal on scroll
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:0.1});

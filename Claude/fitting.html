@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Cycling Fit — Case Study | BCT Taipei</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #04050d;
+      --accent:    #e1ff4b;
+      --dark:      #121212;
+      --border:    rgba(255,255,255,0.08);
+      --dim:       rgba(255,255,255,0.55);
+      --radius:    12px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 80px); max-width: 1320px;
+      height: 64px;
+      background: rgba(4,5,13,0.6);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 50px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 8px 0 24px;
+      z-index: 200;
+      transition: background .3s, border-color .3s;
+    }
+    nav.scrolled { background: rgba(4,5,13,0.9); border-color: rgba(255,255,255,0.12); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 4px; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--dim);
+      text-decoration: none; padding: 8px 16px; border-radius: 50px;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+
+    /* Work dropdown */
+    .nav-work-wrap {
+      position: relative;
+    }
+    .nav-work-btn {
+      font-family: inherit; font-size: 14px; font-weight: 500;
+      color: var(--dim); background: none; border: none; cursor: pointer;
+      padding: 8px 16px; border-radius: 50px;
+      display: flex; align-items: center; gap: 5px;
+      transition: color .2s, background .2s;
+    }
+    .nav-work-btn svg { transition: transform .2s; }
+    .nav-work-wrap:hover .nav-work-btn,
+    .nav-work-wrap.open .nav-work-btn {
+      color: #fff; background: rgba(255,255,255,0.06);
+    }
+    .nav-work-wrap:hover .nav-work-btn svg,
+    .nav-work-wrap.open .nav-work-btn svg { transform: rotate(180deg); }
+    .nav-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%; transform: translateX(-50%) translateY(-4px);
+      background: rgba(4,5,13,0.6);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 18px 0 8px;
+      min-width: 190px;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      z-index: 300;
+    }
+    .nav-work-wrap:hover .nav-dropdown,
+    .nav-work-wrap.open .nav-dropdown {
+      opacity: 1; visibility: visible; pointer-events: all;
+      transform: translateX(-50%) translateY(0);
+    }
+    .nav-dropdown a {
+      display: block; text-align: center;
+      padding: 13px 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none; white-space: nowrap;
+      transition: color .15s, background .15s;
+      border-radius: 10px; margin: 0 6px;
+    }
+    .nav-dropdown a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    .nav-btn {
+      display: inline-flex; align-items: center; height: 48px; padding: 0 24px;
+      border-radius: 50px; background: #2563eb; color: #fff;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .nav-btn:hover { box-shadow: 0 0 40px rgba(37,99,235,0.55); transform: scale(1.03); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      width: 100%; height: 100vh; min-height: 640px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('uploads/fitting/fitting_hero_bg.png') center center / cover no-repeat;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-logo {
+      width: min(680px, 80vw);
+      height: auto;
+      filter: drop-shadow(0 4px 24px rgba(0,0,0,0.35));
+    }
+
+    /* ── SEC2: FEATURES ── */
+    .sec2 {
+      position: relative;
+      background: #111116;
+      padding: 100px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      overflow: hidden;
+    }
+    .sec2-glow {
+      position: absolute;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(225,255,75,0.06) 0%, transparent 70%);
+      right: 100px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .features-list { display: flex; flex-direction: column; }
+    .feature-item {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      opacity: 0.38;
+      transition: opacity .35s;
+    }
+    .feature-item:first-child { border-top: 1px solid var(--border); }
+    .feature-item.active { opacity: 1; }
+    .feature-item h3 {
+      font-size: 28px; font-weight: 600; color: #fff;
+      line-height: 40px; margin-bottom: 12px;
+    }
+    .feature-item p {
+      font-size: 17px; font-weight: 400;
+      color: rgba(255,255,255,0.65);
+      line-height: 30px; letter-spacing: -0.17px;
+    }
+    .feature-num {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .sec2-visual {
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 2;
+    }
+    .ipad-container {
+      position: relative;
+      width: 480px; height: 380px;
+    }
+    .ipad-glow-bg {
+      position: absolute;
+      inset: -30px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(225,255,75,0.08) 0%, transparent 65%);
+    }
+    .ipad-device {
+      position: relative;
+      width: 100%; height: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .ipad-device img {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+
+    /* ── SEC3: HOW WE DESIGN ── */
+    .sec3 {
+      position: relative;
+      background: #0a0a12;
+      padding: 140px 80px 100px;
+      overflow: hidden;
+    }
+    .sec3-bg-line {
+      position: absolute; inset: 0;
+      background: url('https://www.figma.com/api/mcp/asset/9a01ff6d-58f6-43e1-923e-1a08c15fd6f4') center bottom / cover no-repeat;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+    .sec3-inner {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: start;
+    }
+    .sec3-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 24px;
+    }
+    .sec3-title {
+      font-size: 40px; font-weight: 600; color: #fff;
+      line-height: 56px; margin-bottom: 24px;
+    }
+    .sec3-body {
+      font-size: 18px; font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      line-height: 32px; letter-spacing: -0.18px;
+      margin-bottom: 60px;
+    }
+    .uikit-block { margin-top: auto; }
+    .uikit-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 12px;
+    }
+    .uikit-swatches {
+      display: flex; gap: 6px; margin-bottom: 32px;
+    }
+    .swatch {
+      width: 72px; height: 40px; border-radius: 8px;
+    }
+    .uikit-fonts {
+      display: flex; gap: 48px;
+    }
+    .font-block-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 6px;
+    }
+    .font-block-aa {
+      font-size: 44px; font-weight: 700; color: #fff; line-height: 1;
+    }
+    .font-mono-aa { font-family: 'Courier New', monospace; }
+
+    .app-screens {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .app-screen {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    }
+    .app-screen img { width: 100%; display: block; }
+    .app-screen-shift { margin-top: 48px; }
+
+    /* ── SEC4: TECHNOLOGY ── */
+    .sec4 {
+      position: relative;
+      background: linear-gradient(180deg, #010101 0%, #010101 62%, #0a0a12 100%);
+      overflow: hidden;
+    }
+    .sec4-top {
+      display: grid;
+      grid-template-columns: 60fr 40fr;
+      min-height: 969px;
+    }
+    .sec4-left-col { position: relative; }
+    .sec4-bike-img {
+      width: 100%; height: 640px;
+      overflow: hidden;
+      margin-top: 329px;
+    }
+    .sec4-bike-img img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .sec4-right-col {
+      padding: 100px 80px 80px 60px;
+      display: flex; flex-direction: column; justify-content: flex-start;
+    }
+    .sec4-feature-label {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .sec4-title {
+      font-size: 28px; font-weight: 500;
+      color: var(--accent); line-height: 44px;
+      letter-spacing: 0.28px; margin-bottom: 24px;
+    }
+    .sec4-body {
+      font-size: 20px; font-weight: 400;
+      color: #fff; line-height: 36px;
+      letter-spacing: -0.2px; margin-bottom: 80px;
+    }
+    .sec4-stats {
+      display: flex; gap: 80px;
+    }
+    .stat-label {
+      font-size: 16px; font-weight: 400;
+      color: var(--accent); line-height: 24px;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 72px; font-weight: 600;
+      color: var(--accent); line-height: 80px;
+    }
+    .sec4-bottom {
+      display: grid;
+      grid-template-columns: 60fr 40fr;
+    }
+    .sec4-ipad-wrap {
+      position: relative;
+      height: 660px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #e1ff4b 0%, #e9ff78 25%, #f0ffa5 50%, #f8ffd2 75%, #fff 100%);
+    }
+    .sec4-ipad-wrap img.ipad-img {
+      position: absolute;
+      bottom: -80px; left: -100px;
+      width: 130%; height: auto;
+      object-fit: contain;
+    }
+    .sec4-autofit {
+      margin-top: 80px;
+    }
+    .sec4-joint-wrap {
+      background: #0d0d0d;
+      overflow: hidden;
+    }
+    .sec4-joint-wrap video {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .sec4-autofit-title {
+      font-size: 28px; font-weight: 500;
+      color: var(--accent); line-height: 44px;
+      letter-spacing: 0.28px; margin-bottom: 24px;
+    }
+    .sec4-autofit-body {
+      font-size: 20px; font-weight: 400;
+      color: #fff; line-height: 36px;
+      letter-spacing: -0.2px;
+    }
+
+    /* ── DELIVER ── */
+    .deliver {
+      position: relative;
+      background: #f2f2ec;
+      padding: 100px 0 80px;
+      overflow: hidden;
+    }
+    .deliver-inner {
+      max-width: 1440px; margin: 0 auto;
+      padding: 0 80px;
+      position: relative; z-index: 2;
+    }
+    .deliver-bk-logo {
+      position: absolute;
+      right: 0; top: -100px;
+      width: 520px; opacity: 0.05;
+      pointer-events: none;
+    }
+    .deliver-title {
+      text-align: center;
+      font-size: 28px; font-weight: 500;
+      color: #121212; line-height: 44px;
+      letter-spacing: 0.28px; margin-bottom: 48px;
+    }
+    .deliver-img-main {
+      width: 100%; height: 500px;
+      overflow: hidden;
+      border-radius: 12px 12px 0 0;
+      margin-bottom: 8px;
+    }
+    .deliver-img-main img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .deliver-img-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .deliver-img-small {
+      height: 300px; overflow: hidden;
+    }
+    .deliver-img-small:first-child { border-radius: 0 0 0 12px; }
+    .deliver-img-small:last-child  { border-radius: 0 0 12px 0; }
+    .deliver-img-small img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    /* ── OUR WORKS ── */
+    .our-works { background: var(--dark); padding: 100px 80px; }
+    .works-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 52px;
+    }
+    .works-title {
+      font-size: 48px; font-weight: 600; color: #fff;
+      line-height: 60px; margin-bottom: 16px;
+    }
+    .works-sub {
+      font-size: 20px; font-weight: 400;
+      color: var(--dim); line-height: 36px;
+    }
+    .works-view-all {
+      font-size: 14px; font-weight: 700; color: var(--accent);
+      text-decoration: none; display: flex; align-items: center; gap: 8px;
+      transition: gap .2s; margin-bottom: 4px; white-space: nowrap;
+    }
+    .works-view-all:hover { gap: 12px; }
+    .cases-grid {
+      display: grid; grid-template-columns: 2fr 1fr;
+      gap: 20px; min-height: 640px;
+    }
+    .case-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .case-card:hover { border-color: rgba(225,255,75,0.3); box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+    .case-img {
+      flex: 1; overflow: hidden; position: relative;
+      background: linear-gradient(135deg,#080e20,#050915);
+    }
+    .case-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.75; display: block;
+      transition: transform .6s, opacity .3s;
+    }
+    .case-card:hover .case-img img { transform: scale(1.05); opacity: 0.95; }
+    .case-info {
+      padding: 22px 26px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; flex-direction: column; gap: 7px; flex-shrink: 0;
+    }
+    .case-tag {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .case-name { font-size: 17px; font-weight: 700; color: #fff; }
+    .case-go {
+      font-size: 13px; font-weight: 600; color: var(--dim);
+      display: flex; align-items: center; gap: 6px;
+      text-decoration: none; transition: color .2s, gap .2s;
+    }
+    .case-card:hover .case-go { color: var(--accent); gap: 10px; }
+    .cases-right { display: flex; flex-direction: column; gap: 20px; }
+    .cases-right .case-card { flex: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 64px 80px 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .f-brand { margin-bottom: 16px; }
+    .f-desc { font-size: 13px; color: rgba(255,255,255,0.32); line-height: 20px; }
+    .f-col h4 {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.35); margin-bottom: 16px;
+    }
+    .f-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .f-links a {
+      font-size: 13px; color: rgba(255,255,255,0.5);
+      text-decoration: none; transition: color .2s;
+    }
+    .f-links a:hover { color: #fff; }
+    .footer-btm {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 24px;
+    }
+    .f-copy, .f-parent { font-size: 12px; color: rgba(255,255,255,0.28); }
+
+    /* ── BACK LINK ── */
+    .back-to-cases {
+      display: inline-flex; align-items: center; gap: 8px;
+      position: absolute; top: calc(100vh - 60px); left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .back-to-cases:hover { color: #fff; }
+
+    /* reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s, transform .7s;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="BCT Taipei Dark.html" class="nav-logo">
+    <img src="uploads/ic_bct_logo_white.png" alt="Bahwan CyberTek" style="height:34px;width:auto;display:block">
+  </a>
+  <div class="nav-links">
+    <a href="BCT Taipei Dark.html#about">About</a>
+    <a href="BCT Taipei Dark.html#services">Services</a>
+    <a href="BCT Taipei Dark.html#process">Process</a>
+    <div class="nav-work-wrap" id="navWorkWrap">
+      <button class="nav-work-btn" aria-haspopup="true" aria-expanded="false">
+        Work
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2,4 6,8 10,4"/>
+        </svg>
+      </button>
+      <div class="nav-dropdown" role="menu">
+        <a href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer" role="menuitem">NOVA</a>
+        <a href="fitting.html" role="menuitem">Dynamic Cycling Fit</a>
+        <a href="#" role="menuitem">FLIR</a>
+        <a href="https://ycc-bct.github.io/bct-taipei-website/gac.html" target="_blank" rel="noopener noreferrer" role="menuitem">GAC</a>
+      </div>
+    </div>
+  </div>
+  <a href="BCT Taipei Dark.html#cta" class="nav-btn">Contact Us</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <img class="hero-logo" src="uploads/fitting/fitting_hero_logo.png" alt="Dynamic Cycling Fit — Revolutionizing Bicycle Fitting with Machine Learning">
+  </div>
+</section>
+
+<!-- ── SEC2: THREE KEY FEATURES ── -->
+<section class="sec2">
+  <div class="sec2-glow"></div>
+
+  <div class="features-list">
+    <div class="feature-item active" data-idx="0">
+      <div class="feature-num">01</div>
+      <h3>Start from a tablet</h3>
+      <p>Dynamic Cycling Fit (DCF) is an app designed to help cyclists optimise their bike setup for maximum comfort, efficiency, and performance — only using a tablet can make it all done.</p>
+    </div>
+    <div class="feature-item" data-idx="1">
+      <div class="feature-num">02</div>
+      <h3>AutoFit using Machine Learning</h3>
+      <p>AutoFit is an innovative technology using machine learning to detect the user's joint points and calculate fitting information in real-time.</p>
+    </div>
+    <div class="feature-item" data-idx="2">
+      <div class="feature-num">03</div>
+      <h3>No sweat for getting results</h3>
+      <p>By using our technology, user data can be quickly integrated and analysed, producing real-time insights and results for more accurate experience.</p>
+    </div>
+  </div>
+
+  <div class="sec2-visual">
+    <div class="ipad-container">
+      <div class="ipad-glow-bg"></div>
+      <div class="ipad-device">
+        <img src="https://www.figma.com/api/mcp/asset/0c9942c7-4ece-4cd2-9cba-e257f463748e" alt="DCF App on iPad" onerror="this.src='https://www.figma.com/api/mcp/asset/d24e05f0-1d10-4431-82f9-8deb4332c762'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SEC3: HOW WE DESIGN ── -->
+<section class="sec3">
+  <div class="sec3-bg-line"></div>
+  <div class="sec3-inner">
+
+    <div class="sec3-left reveal">
+      <div class="sec3-eyebrow">Design &amp; UX</div>
+      <h2 class="sec3-title">How we design</h2>
+      <p class="sec3-body">We focused on creating an intuitive and easy-to-use interface, ensuring that both professional technicians and first-time users can quickly get started.</p>
+
+      <div class="uikit-block">
+        <div class="uikit-label">Colour palette</div>
+        <div class="uikit-swatches">
+          <div class="swatch" style="background:#0a0a12;border:1px solid rgba(255,255,255,0.1)"></div>
+          <div class="swatch" style="background:#1a1f1f"></div>
+          <div class="swatch" style="background:#e1ff4b"></div>
+          <div class="swatch" style="background:#ffffff;border:1px solid rgba(0,0,0,0.1)"></div>
+        </div>
+        <div class="uikit-label">Typography</div>
+        <div class="uikit-fonts">
+          <div>
+            <div class="font-block-label">Manrope</div>
+            <div class="font-block-aa">Aa</div>
+          </div>
+          <div>
+            <div class="font-block-label">Ingram Mono</div>
+            <div class="font-block-aa font-mono-aa">Aa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-screens reveal">
+      <div class="app-screen">
+        <img src="https://www.figma.com/api/mcp/asset/efc3ef05-6eb4-4a04-b1d7-85c6d986531a" alt="DCF App — Log In">
+      </div>
+      <div class="app-screen app-screen-shift">
+        <img src="https://www.figma.com/api/mcp/asset/f4246384-ac1e-48f5-98c3-d03ecfc46d5f" alt="DCF App — Choose Category">
+      </div>
+      <div class="app-screen">
+        <img src="https://www.figma.com/api/mcp/asset/922748da-8d74-4751-9307-b810f2644ce1" alt="DCF App — Body Dimension">
+      </div>
+      <div class="app-screen app-screen-shift">
+        <img src="https://www.figma.com/api/mcp/asset/3debe886-560c-4db3-acf3-d8172a410bcc" alt="DCF App — Setup Bike">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── SEC4: TECHNOLOGY ── -->
+<section class="sec4">
+  <div class="sec4-top">
+    <div class="sec4-left-col">
+      <div class="sec4-bike-img">
+        <img src="https://www.figma.com/api/mcp/asset/72e152eb-1dfa-4da8-b23c-f230267bb668" alt="Bike saddle close-up">
+      </div>
+    </div>
+    <div class="sec4-right-col reveal">
+      <div class="sec4-feature-label">Technology</div>
+      <h2 class="sec4-title">Using the updated<br>development strategies</h2>
+      <p class="sec4-body">We developed DCF App that leverages machine learning technology to accurately detect the user's joint points and provide real-time posture analysis.</p>
+      <div class="sec4-stats">
+        <div>
+          <div class="stat-label">Saddle Position X</div>
+          <div class="stat-value">145</div>
+        </div>
+        <div>
+          <div class="stat-label">Saddle Position Y</div>
+          <div class="stat-value">154</div>
+        </div>
+      </div>
+      <div class="sec4-autofit reveal">
+        <h2 class="sec4-autofit-title">Seamless experience<br>with AutoFit</h2>
+        <p class="sec4-autofit-body">AutoFit is an innovative technology integrates with the bicycle hardware, automatically adjusting the seat and handlebar position to achieve a fully automated fitting process.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec4-bottom">
+    <div class="sec4-ipad-wrap">
+      <img class="ipad-img" src="uploads/fitting/img_dcf_mockup.png" alt="iPad device">
+    </div>
+    <div class="sec4-joint-wrap">
+      <video src="uploads/fitting/fitting_joint.mp4" autoplay loop muted playsinline></video>
+    </div>
+  </div>
+</section>
+
+<!-- ── DELIVER ── -->
+<section class="deliver">
+  <div class="deliver-inner">
+    <img class="deliver-bk-logo" src="https://www.figma.com/api/mcp/asset/9d29bc88-c3c3-47ed-b9bc-3d2eb7efa4b9" alt="">
+    <h2 class="deliver-title reveal">Deliver on time<br>with a confident smile</h2>
+    <div class="deliver-img-main reveal">
+      <img src="https://www.figma.com/api/mcp/asset/cb71f9c1-279c-4074-bf75-9b8d963f6ac8" alt="Delivery in action">
+    </div>
+    <div class="deliver-img-row">
+      <div class="deliver-img-small reveal">
+        <img src="https://www.figma.com/api/mcp/asset/1e3200a3-ac4e-46ab-9f1a-4e1b2e459536" alt="Cyclist fitting session">
+      </div>
+      <div class="deliver-img-small reveal">
+        <img src="https://www.figma.com/api/mcp/asset/a8c13fdf-607a-4c24-a1ca-3a7a0a536114" alt="DCF app in use">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OUR WORKS ── -->
+<section class="our-works">
+  <div class="works-header reveal">
+    <div>
+      <h2 class="works-title">Our works</h2>
+      <p class="works-sub">We design systems and experiences that elevate how people connect, work, and grow.</p>
+    </div>
+    <a href="BCT Taipei Dark.html#cases" class="works-view-all">View all projects →</a>
+  </div>
+  <div class="cases-grid reveal">
+    <a class="case-card" href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer">
+      <div class="case-img"><img src="uploads/NOVA.png" alt="NOVA Platform"></div>
+      <div class="case-info">
+        <div class="case-tag">NOVA</div>
+        <div class="case-name">Dynamic Cycling Fit Platform</div>
+        <span class="case-go">Explore more →</span>
+      </div>
+    </a>
+    <div class="cases-right">
+      <a class="case-card" href="fitting.html" style="text-decoration:none;display:flex;flex-direction:column;">
+        <div class="case-img" style="min-height:150px"><img src="assets/case_dcf.png" alt="DCF" loading="lazy"></div>
+        <div class="case-info">
+          <div class="case-tag">Giant</div>
+          <div class="case-name">Dynamic Cycling Fit</div>
+          <span class="case-go">Explore more →</span>
+        </div>
+      </a>
+      <div class="case-card">
+        <div class="case-img" style="min-height:150px"><img src="assets/case_datalake.png" alt="DataLake" loading="lazy"></div>
+        <div class="case-info">
+          <div class="case-tag">Enterprise</div>
+          <div class="case-name">DataLake Platform</div>
+          <a href="#" class="case-go">Explore more →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="f-brand"><img src="uploads/ic_bct_logo_white.png" alt="Bahwan CyberTek" style="height:28px;width:auto;opacity:0.7"></div>
+      <p class="f-desc">Global digital transformation. Delivering innovative technology since 1999.</p>
+    </div>
+    <div class="f-col"><h4>Services</h4><ul class="f-links">
+      <li><a href="#">AI Application</a></li>
+      <li><a href="#">Data Platform</a></li>
+      <li><a href="#">Cloud Services</a></li>
+      <li><a href="#">UI / UX Design</a></li>
+      <li><a href="#">Mobile &amp; Web Apps</a></li>
+    </ul></div>
+    <div class="f-col"><h4>Company</h4><ul class="f-links">
+      <li><a href="#">About Us</a></li>
+      <li><a href="#">Our Process</a></li>
+      <li><a href="BCT Taipei Dark.html#cases">Case Studies</a></li>
+      <li><a href="#">Careers</a></li>
+    </ul></div>
+    <div class="f-col"><h4>Contact</h4><ul class="f-links">
+      <li><a href="#">hello@bcttaipei.com</a></li>
+      <li><a href="#">LinkedIn</a></li>
+      <li><a href="#">Taipei, Taiwan</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-btm">
+    <div class="f-copy">© 2026 BCT Taipei. All rights reserved.</div>
+    <div class="f-parent">Bahwan CyberTek Group</div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', scrollY > 80);
+  }, { passive: true });
+
+  // Feature tabs (Sec2)
+  const items = document.querySelectorAll('.feature-item');
+  let autoTimer;
+  function activateTab(idx) {
+    items.forEach((el, i) => el.classList.toggle('active', i === idx));
+  }
+  function startAuto() {
+    let i = 0;
+    autoTimer = setInterval(() => {
+      i = (i + 1) % items.length;
+      activateTab(i);
+    }, 4000);
+  }
+  items.forEach((el, idx) => {
+    el.addEventListener('click', () => {
+      clearInterval(autoTimer);
+      activateTab(idx);
+      startAuto();
+    });
+  });
+  startAuto();
+
+  // Work dropdown (click-toggle for touch)
+  const navWorkWrap = document.getElementById('navWorkWrap');
+  navWorkWrap.querySelector('.nav-work-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = navWorkWrap.classList.toggle('open');
+    navWorkWrap.querySelector('.nav-work-btn').setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', () => {
+    navWorkWrap.classList.remove('open');
+    navWorkWrap.querySelector('.nav-work-btn').setAttribute('aria-expanded', false);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
