@@ -240,6 +240,17 @@
       height: 520px;
     }
 
+    .hero-bg-svg {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 52%;
+      object-fit: cover;
+      opacity: .55;
+      pointer-events: none;
+    }
+
     .hero-device img {
       width: 100%;
       height: 100%;
@@ -1022,6 +1033,25 @@
     .fade-up-delay-4 { transition-delay: .4s; }
     .fade-up-delay-5 { transition-delay: .5s; }
 
+    /* ── Modifier helpers ────────────────────────── */
+    .about-label-cyan { color: rgba(0,204,255,.7); }
+
+    .process-body-center {
+      max-width: 480px;
+      margin: 16px auto 0;
+      text-align: center;
+    }
+
+    .btn-primary-sm {
+      font-size: 15px;
+      padding: 14px 32px;
+    }
+
+    .footer-contact-link {
+      color: inherit;
+      text-decoration: none;
+    }
+
     /* ── RESPONSIVE ──────────────────────────────── */
     @media (max-width: 1100px) {
       nav { padding: 0 40px; }
@@ -1103,10 +1133,12 @@
 
     <!-- Right decorations -->
     <div class="hero-deco">
+      <img class="hero-bg-svg" src="hero-bg.svg" alt="" aria-hidden="true" />
       <div class="deco-grid"></div>
       <div class="deco-sphere-1"></div>
       <div class="deco-sphere-2"></div>
       <div class="hero-device">
+        <!-- TODO: replace with local file, e.g. hero-mockup.png -->
         <img src="https://www.figma.com/api/mcp/asset/cdb20685-c5c0-48e8-8dad-6c238385897c" alt="App UI Preview" />
       </div>
     </div>
@@ -1149,7 +1181,7 @@
           Services Practice" — collaborating with international teams to build products that
           reach millions of users across healthcare, retail, and enterprise sectors.
         </p>
-        <p class="about-label" style="margin-bottom:12px;">Tech Stack</p>
+        <p class="about-label" style="margin-bottom:12px">Tech Stack</p>
         <div class="tech-stack">
           <span class="tech-tag">iOS / Swift</span>
           <span class="tech-tag">Android / Kotlin</span>
@@ -1208,44 +1240,34 @@
       <!-- Wide card -->
       <div class="service-card wide fade-up">
         <p class="service-num">01</p>
-        <div class="service-icon">&#128241;</div>
-        <h3 class="service-name">Mobile &amp; Web Apps</h3>
+        <div class="service-icon">&#129302;</div>
+        <h3 class="service-name">AI Application</h3>
         <p class="service-desc">
-          Transform your ideas into reality with native iOS, Android, and cross-platform
-          web applications. From consumer-facing eReaders to enterprise dashboards —
-          we build products that users love.
+          Build intelligent applications powered by large language models, generative AI,
+          and computer vision. From conversational interfaces to AI-driven workflows —
+          we deliver production-ready solutions that create measurable business impact.
         </p>
         <div class="service-tag">
-          <span class="stag">iOS / Swift</span>
-          <span class="stag">Android / Kotlin</span>
-          <span class="stag">React Native</span>
-          <span class="stag">Hybrid</span>
+          <span class="stag">LLM Integration</span>
+          <span class="stag">Generative AI</span>
+          <span class="stag">Computer Vision</span>
+          <span class="stag">ML Ops</span>
         </div>
       </div>
 
       <!-- Featured dark card -->
       <div class="service-card featured fade-up fade-up-delay-1">
         <p class="service-num">02</p>
-        <div class="service-icon">&#9889;</div>
-        <h3 class="service-name">No / Low Code Apps</h3>
+        <div class="service-icon">&#128202;</div>
+        <h3 class="service-name">Data Platform</h3>
         <p class="service-desc">
-          Deliver business solutions faster with modern no-code and low-code platforms.
-          Ideal for rapid prototyping and internal tools.
+          Automate repetitive workflows and unlock intelligent insights with robotic
+          process automation and enterprise data platform solutions.
         </p>
       </div>
 
       <div class="service-card fade-up fade-up-delay-1">
         <p class="service-num">03</p>
-        <div class="service-icon">&#129504;</div>
-        <h3 class="service-name">RPA &amp; ML Services</h3>
-        <p class="service-desc">
-          Automate repetitive workflows and unlock intelligent insights with robotic
-          process automation and machine learning solutions.
-        </p>
-      </div>
-
-      <div class="service-card fade-up fade-up-delay-2">
-        <p class="service-num">04</p>
         <div class="service-icon">&#9729;&#65039;</div>
         <h3 class="service-name">Cloud Services</h3>
         <p class="service-desc">
@@ -1255,7 +1277,7 @@
       </div>
 
       <div class="service-card fade-up fade-up-delay-2">
-        <p class="service-num">05</p>
+        <p class="service-num">04</p>
         <div class="service-icon">&#127912;</div>
         <h3 class="service-name">UI / UX Design</h3>
         <p class="service-desc">
@@ -1264,13 +1286,14 @@
         </p>
       </div>
 
-      <div class="service-card fade-up fade-up-delay-3">
-        <p class="service-num">06</p>
-        <div class="service-icon">&#129664;</div>
-        <h3 class="service-name">AR / VR Experiences</h3>
+      <div class="service-card fade-up fade-up-delay-2">
+        <p class="service-num">05</p>
+        <div class="service-icon">&#128241;</div>
+        <h3 class="service-name">Mobile &amp; Web Apps</h3>
         <p class="service-desc">
-          Immersive augmented and virtual reality solutions for retail, training,
-          and interactive product demonstrations.
+          Transform your ideas into reality with native iOS, Android, and cross-platform
+          web applications. From consumer-facing apps to enterprise dashboards —
+          we build products that users love.
         </p>
       </div>
     </div>
@@ -1283,7 +1306,7 @@
       <h2 class="section-title">
         Verified <span class="serif-italic grad-text">End to End</span> Process
       </h2>
-      <p class="section-body" style="max-width:480px;margin:16px auto 0;text-align:center;">
+      <p class="section-body process-body-center">
         To guarantee the best business results — every single time.
       </p>
     </div>
@@ -1350,7 +1373,7 @@
   <section id="cases">
     <div class="cases-header fade-up">
       <div>
-        <p class="about-label" style="color:rgba(0,204,255,.7);">Related</p>
+        <p class="about-label about-label-cyan">Related</p>
         <h2 class="section-title">
           <span class="serif-italic grad-text">Case</span> Studies
         </h2>
@@ -1363,7 +1386,21 @@
       <div class="case-card tall fade-up">
         <img
           class="case-img"
-          src="https://www.figma.com/api/mcp/asset/b505977a-cfce-4f1a-b711-dd889195128c"
+          src="case-nova.jpg"
+          alt="Nova"
+        />
+        <div class="case-info">
+          <p class="case-category grad-text">AI Web</p>
+          <p class="case-name">Nova</p>
+          <a href="#cta" class="case-link grad-text">Explore more &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Right top -->
+      <div class="case-card fade-up fade-up-delay-1">
+        <img
+          class="case-img"
+          src="case-dcf.jpg"
           alt="Dynamic Cycling Fit"
         />
         <div class="case-info">
@@ -1373,25 +1410,11 @@
         </div>
       </div>
 
-      <!-- Right top -->
-      <div class="case-card fade-up fade-up-delay-1">
-        <img
-          class="case-img"
-          src="https://www.figma.com/api/mcp/asset/1c6d3a14-23b6-4cd8-9943-cc539a2bd5c5"
-          alt="Giant Account Center"
-        />
-        <div class="case-info">
-          <p class="case-category grad-text">Retail &amp; E-commerce · Web App</p>
-          <p class="case-name">Giant Account Center</p>
-          <a href="#cta" class="case-link grad-text">Explore more &#8594;</a>
-        </div>
-      </div>
-
       <!-- Right bottom -->
       <div class="case-card fade-up fade-up-delay-2">
         <img
           class="case-img"
-          src="https://www.figma.com/api/mcp/asset/a8dd46ca-54c7-449e-a274-ceaa56227355"
+          src="case-datalake.jpg"
           alt="DataLake"
         />
         <div class="case-info">
@@ -1439,7 +1462,7 @@
           open environment with the flexibility to do their best work — in the office
           or remotely.
         </p>
-        <a href="mailto:taipei-bct@bahwancybertek.com" class="btn-primary" style="font-size:15px;padding:14px 32px;">
+        <a href="mailto:taipei-bct@bahwancybertek.com" class="btn-primary btn-primary-sm">
           Join Our Team
         </a>
       </div>
@@ -1504,7 +1527,7 @@
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
-        <img src="ic_logo_bct.png" alt="Bahwan CyberTek" />
+        <img src="ic_bct_logo_white.png" alt="Bahwan CyberTek" />
         <p class="footer-tagline">
           Bahwan CyberTek — a global digital transformation company delivering
           innovative technology solutions since 1999.
@@ -1513,12 +1536,11 @@
       <div>
         <p class="footer-col-title">Services</p>
         <ul class="footer-links">
-          <li><a href="#services">Mobile &amp; Web Apps</a></li>
-          <li><a href="#services">No / Low Code</a></li>
-          <li><a href="#services">RPA &amp; ML</a></li>
+          <li><a href="#services">AI Application</a></li>
+          <li><a href="#services">Data Platform</a></li>
           <li><a href="#services">Cloud Services</a></li>
           <li><a href="#services">UI / UX Design</a></li>
-          <li><a href="#services">AR / VR</a></li>
+          <li><a href="#services">Mobile &amp; Web Apps</a></li>
         </ul>
       </div>
       <div>
@@ -1534,7 +1556,7 @@
         <p class="footer-col-title">Contact</p>
         <div class="footer-contact-item">
           <span>&#9993;</span>
-          <a href="mailto:taipei-bct@bahwancybertek.com" style="color:inherit;text-decoration:none;">
+          <a href="mailto:taipei-bct@bahwancybertek.com" class="footer-contact-link">
             taipei-bct@bahwancybertek.com
           </a>
         </div>
