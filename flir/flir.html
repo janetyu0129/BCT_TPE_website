@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLIR — Seamless Connectivity for Your Specialized Sensors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #008275;
+      --primary-dim:#00574d;
+      --graph:      #3BE8D3;
+      --hi-line:    #F25F21;
+      --lo-line:    #F8C527;
+      --error:      #EFB155;
+      --bg:         #1E1E1E;
+      --bg2:        #262626;
+      --bg3:        #2F2F2F;
+      --bd:         rgba(255,255,255,0.07);
+      --sec:        #546869;
+      --muted:      #899595;
+      --text:       #FFFFFF;
+      --ff:         'Noto Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 80px;
+      background: rgba(30,30,30,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(59,232,211,0.1);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 14px; text-decoration: none;
+    }
+    .nav-badge {
+      width: 38px; height: 38px;
+      background: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
+      color: #fff;
+    }
+    .nav-wordmark {
+      font-size: 1.35rem; font-weight: 800; letter-spacing: 0.18em;
+      color: var(--text);
+    }
+    .nav-credit {
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .nav-credit span { color: var(--graph); }
+
+    /* ─── REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(.22,.68,0,1), transform 0.7s cubic-bezier(.22,.68,0,1);
+    }
+    .reveal.on { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+    .d4 { transition-delay: 0.4s; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      padding-top: 76px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 50% at 72% 55%, rgba(0,130,117,0.14) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 30% at 20% 80%, rgba(59,232,211,0.04) 0%, transparent 60%);
+    }
+    .hero-left {
+      padding: 80px 64px 80px 80px;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; gap: 26px;
+    }
+    .label {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--graph);
+    }
+    .hero-h1 {
+      font-size: clamp(2.6rem, 3.4vw, 3.6rem);
+      font-weight: 800; line-height: 1.08;
+      letter-spacing: -0.025em;
+    }
+    .hero-h1 .accent { color: var(--graph); }
+    .hero-sub {
+      font-size: 1rem; font-weight: 400;
+      color: var(--muted); line-height: 1.75;
+      max-width: 46ch;
+    }
+    .hero-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 4px;
+    }
+    .chip {
+      padding: 5px 14px;
+      border: 1px solid rgba(59,232,211,0.22);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--graph);
+    }
+
+    .hero-right {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh;
+      perspective: 1200px;
+      cursor: none;
+    }
+
+    /* ─── DEVICE IMAGE ─── */
+    .device-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      padding: 0 20px;
+      transform-style: preserve-3d;
+    }
+    .device-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 40px 80px rgba(0,0,0,0.7));
+      animation: float 5s ease-in-out infinite;
+      transform-origin: center center;
+      transition: filter 0.3s ease;
+      will-change: transform;
+    }
+    .device-wrap:hover .device-img {
+      filter: drop-shadow(0 40px 80px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(59,232,211,0.15));
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0px);   }
+      50%      { transform: translateY(-14px); }
+    }
+
+    /* ─── CUSTOM CURSOR ─── */
+    .cursor-dot {
+      position: fixed; pointer-events: none; z-index: 9999;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--graph);
+      transform: translate(-50%,-50%);
+      transition: opacity 0.2s, transform 0.15s;
+      opacity: 0;
+    }
+    .cursor-ring {
+      position: fixed; pointer-events: none; z-index: 9998;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(59,232,211,0.6);
+      transform: translate(-50%,-50%);
+      transition: width 0.25s, height 0.25s, opacity 0.2s, border-color 0.2s;
+      opacity: 0;
+    }
+    .cursor-dot.active   { opacity: 1; }
+    .cursor-ring.active  { opacity: 1; }
+    .cursor-ring.hover   { width: 56px; height: 56px; border-color: rgba(59,232,211,1); }
+
+    /* ─── CHART SVG ─── */
+    .ch { width: 100%; display: block; }
+
+    /* ─── SECTION / CONTAINER ─── */
+    .section { padding: 100px 0; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 80px; }
+    .divider { height: 1px; background: var(--bd); }
+
+    .sec-label {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--graph); margin-bottom: 14px;
+    }
+    .sec-h2 {
+      font-size: clamp(2rem, 2.8vw, 2.9rem);
+      font-weight: 800; letter-spacing: -0.025em; line-height: 1.1;
+    }
+
+    /* ─── MISSION ─── */
+    .mission-head { margin-bottom: 56px; }
+    .mission-head .sec-h2 { max-width: 22ch; margin-bottom: 18px; text-align: center; margin-left: auto; margin-right: auto; }
+    .mission-intro {
+      font-size: 0.97rem; color: var(--muted);
+      line-height: 1.75; max-width: 54ch;
+    }
+    .mission-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 2px;
+    }
+    .m-card {
+      position: relative; overflow: hidden;
+      min-height: 380px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 32px;
+      cursor: default;
+    }
+    .m-card-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.55s cubic-bezier(.22,.68,0,1);
+    }
+    .m-card:hover .m-card-bg { transform: scale(1.04); }
+    .m-card-ov {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(0,0,0,0.88) 0%,
+        rgba(0,0,0,0.45) 55%,
+        rgba(0,0,0,0.15) 100%);
+    }
+    .m-card-1 .m-card-bg { background: linear-gradient(145deg,#071e1b 0%,#0d3028 55%,#071a16 100%); }
+    .m-card-2 .m-card-bg { background: linear-gradient(145deg,#1a1700 0%,#2e2800 55%,#1a1600 100%); }
+    .m-card-3 .m-card-bg { background: linear-gradient(145deg,#160a00 0%,#281500 55%,#160a00 100%); }
+
+    /* subtle grid texture */
+    .m-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(59,232,211,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,232,211,0.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+    .m-card-ico {
+      position: absolute; top: 28px; right: 28px; z-index: 2;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(59,232,211,0.28);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-card-ico svg { width: 18px; height: 18px; color: var(--graph); }
+    .m-card-body { position: relative; z-index: 2; }
+    .m-card-num {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--graph); margin-bottom: 10px;
+    }
+    .m-card-title {
+      font-size: 1.22rem; font-weight: 700;
+      line-height: 1.25; margin-bottom: 11px;
+    }
+    .m-card-desc {
+      font-size: 0.85rem; color: rgba(255,255,255,0.65); line-height: 1.68;
+    }
+
+    /* ─── SERVICE CONCEPT ─── */
+    .service { position: relative; overflow: hidden; }
+    #particles { position: absolute; inset: 0; pointer-events: none; }
+    .service-head { margin-bottom: 64px; position: relative; z-index: 1; }
+    .pill {
+      position: relative; z-index: 1;
+      border: 1px solid rgba(59,232,211,0.22);
+      border-radius: 999px;
+      padding: 60px 72px;
+      max-width: 940px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 48px 1fr;
+      gap: 0; align-items: center;
+      background: rgba(10,20,18,0.5);
+      backdrop-filter: blur(4px);
+    }
+    .pill-item-title {
+      font-size: 1.28rem; font-weight: 700;
+      line-height: 1.28; margin-bottom: 16px;
+    }
+    .pill-item-title.teal  { color: var(--graph); }
+    .pill-item-title.amber { color: var(--lo-line); }
+    .pill-item-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.72; }
+    .pill-sep {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      position: relative;
+    }
+    .pill-sep::before, .pill-sep::after {
+      content: '';
+      flex: 1; width: 1px; background: rgba(59,232,211,0.18);
+    }
+    .pill-plus {
+      width: 34px; height: 34px;
+      border: 1px solid rgba(59,232,211,0.28);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--graph);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+    .pill-sep-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; height: 180px; justify-content: space-between;
+    }
+    .pill-line { flex: 1; width: 1px; background: rgba(59,232,211,0.18); }
+
+    /* ─── FEATURES ─── */
+    .features { background: var(--bg2); }
+    .feat-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 64px;
+    }
+    .feat-sub {
+      font-size: 0.92rem; color: var(--muted); line-height: 1.72;
+      max-width: 42ch;
+    }
+    .feat-layout {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 72px; align-items: center;
+    }
+    .feat-sec-label { color: var(--graph); margin-bottom: 10px; }
+    .feat-h3 {
+      font-size: 1.65rem; font-weight: 700;
+      line-height: 1.2; margin-bottom: 18px;
+    }
+    .feat-desc {
+      font-size: 0.93rem; color: var(--muted);
+      line-height: 1.75; margin-bottom: 28px;
+    }
+    .feat-pts { display: flex; flex-direction: column; gap: 12px; }
+    .feat-pt {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 0.88rem; color: rgba(255,255,255,0.78); line-height: 1.5;
+    }
+    .feat-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--graph); flex-shrink: 0; margin-top: 6px;
+    }
+
+    /* Feature phone cluster */
+    .feat-phones {
+      position: relative; height: 440px;
+    }
+    .fp {
+      position: absolute;
+      width: 192px;
+      background: #0d1a1a;
+      border-radius: 28px;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      box-shadow: 0 28px 56px rgba(0,0,0,0.55);
+      overflow: hidden;
+    }
+    .fp-1 { left: 0;   top: 0;  z-index: 3; }
+    .fp-2 { left: 104px; top: 28px; z-index: 4; background: #f4f4f4; }
+    .fp-3 { right: 0; top: 56px; z-index: 3; }
+
+    .fp-pill { width: 60px; height: 4px; background: rgba(255,255,255,0.1); margin: 8px auto 0; border-radius: 2px; }
+    .fp-pill-light { background: rgba(0,0,0,0.12); }
+    .fp-hdr {
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(59,232,211,0.08);
+      background: rgba(0,0,0,0.2);
+    }
+    .fp-hdr-light { background: rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .fp-t { font-size: 0.6rem; font-weight: 700; color: var(--text); }
+    .fp-t-dark { color: #111; }
+    .fp-s { font-size: 0.48rem; color: var(--sec); }
+    .fp-s-dark { color: #888; }
+    .fp-body { padding: 8px 10px 10px; }
+    .fp-val-row {
+      display: flex; align-items: baseline; gap: 3px; margin-bottom: 3px;
+    }
+    .fp-alert { font-size: 0.55rem; color: var(--hi-line); }
+    .fp-num  { font-size: 1.32rem; font-weight: 800; color: var(--text); }
+    .fp-num-dark { color: #111; }
+    .fp-unit { font-size: 0.52rem; color: var(--muted); }
+    .fp-unit-dark { color: #888; }
+    .fp-mm {
+      display: flex; gap: 8px; font-size: 0.44rem; color: var(--sec); margin-bottom: 6px;
+    }
+    .fp-mm b { color: var(--graph); font-weight: 600; }
+    .fp-mm-dark b { color: var(--primary); }
+    .fp-alarm-lbl { font-size: 0.44rem; color: var(--hi-line); }
+    .fp-alarm-val { font-size: 0.52rem; font-weight: 700; color: var(--graph); }
+    .fp-alarm-val-dark { color: var(--primary); }
+
+    /* ─── STATS ─── */
+    .stats { display: grid; grid-template-columns: 1fr 1fr; min-height: 480px; }
+    .stats-l {
+      background: #111;
+      padding: 80px 80px;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 36px;
+    }
+    .quote-mark {
+      font-size: 3.5rem; color: var(--lo-line);
+      line-height: 0.7; font-weight: 300;
+    }
+    .quote-text {
+      font-size: 1rem; color: rgba(255,255,255,0.78);
+      line-height: 1.8; max-width: 42ch;
+    }
+    .quote-author { display: flex; align-items: center; gap: 16px; }
+    .author-ava {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--bg3);
+      border: 2px solid var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .author-name { font-size: 0.9rem; font-weight: 700; }
+    .author-role { font-size: 0.76rem; color: var(--muted); }
+
+    .stats-r {
+      background: var(--primary);
+      padding: 80px 80px;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 16px;
+      position: relative; overflow: hidden;
+    }
+    .stats-r::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(140deg, rgba(0,0,0,0.18) 0%, transparent 55%);
+    }
+    .stats-num {
+      position: relative; z-index: 1;
+      font-size: clamp(4rem, 7vw, 6.5rem);
+      font-weight: 800; letter-spacing: -0.04em; line-height: 0.92;
+    }
+    .stats-num .n-hi  { color: var(--lo-line); }
+    .stats-num .n-dk  { color: rgba(0,0,0,0.65); }
+    .stats-num .n-plus{ color: rgba(0,0,0,0.4); font-size: 0.55em; }
+    .stats-word {
+      position: relative; z-index: 1;
+      font-size: 1.9rem; font-weight: 300;
+      color: rgba(0,0,0,0.55); letter-spacing: -0.01em;
+    }
+    .stats-rule {
+      width: 48px; height: 1px;
+      background: rgba(0,0,0,0.2);
+      position: relative; z-index: 1;
+      margin: 4px 0;
+    }
+    .stats-sub {
+      position: relative; z-index: 1;
+      font-size: 0.85rem; color: rgba(0,0,0,0.55);
+    }
+    .stats-sub strong { color: var(--lo-line); font-weight: 700; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #111;
+      border-top: 1px solid rgba(59,232,211,0.08);
+      padding: 28px 80px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-l { font-size: 0.76rem; color: var(--sec); }
+    .footer-l strong { color: var(--graph); }
+    .footer-r { font-size: 0.7rem; color: var(--sec); letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="nav-badge">FLIR</div>
+    <span class="nav-wordmark">FLIR</span>
+  </a>
+  <div class="nav-credit">Case Study by <span>Bahwan Cybertek</span></div>
+</nav>
+
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+
+  <div class="hero-left">
+    <p class="label reveal">Mobile App &nbsp;·&nbsp; IoT &nbsp;·&nbsp; Environmental Monitoring</p>
+    <h1 class="hero-h1 reveal d1">
+      Seamless Connectivity<br>
+      for Your <span class="accent">Specialized</span><br>
+      Sensors
+    </h1>
+    <p class="hero-sub reveal d2">
+      A mobile companion connecting FLIR's environmental sensors to real-time monitoring, intelligent alarms, and custom PDF reports — over a proprietary Bluetooth protocol.
+    </p>
+    <div class="hero-chips reveal d3">
+      <span class="chip">App Develop</span>
+      <span class="chip">iOS &amp; Android</span>
+      <span class="chip">Real-time Data</span>
+    </div>
+  </div>
+
+  <!-- Custom cursor elements -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <div class="hero-right reveal d2">
+    <div class="device-wrap" id="deviceWrap">
+      <img class="device-img" id="deviceImg" src="FLIR Image/Device.svg" alt="FLIR App Mockup">
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ═══════════ MISSION ═══════════ -->
+<section class="section">
+  <div class="wrap">
+    <div class="mission-head reveal" style="text-align:center;margin-bottom:48px">
+      <p class="sec-label" style="justify-content:center;display:flex">Our Mission</p>
+      <h2 class="sec-h2">What we built for FLIR</h2>
+    </div>
+    <div class="mission-grid" style="grid-template-columns:1fr 1fr">
+      <div class="m-card m-card-1 reveal">
+        <div class="m-card-bg"></div>
+        <div class="m-card-ov"></div>
+        <div class="m-card-body" style="text-align:center">
+          <div class="m-card-ico" style="position:relative;top:auto;right:auto;margin:0 auto 16px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01M5.657 13.657a8.5 8.5 0 0112.686 0M2.343 10.343a13.5 13.5 0 0119.314 0"/>
+            </svg>
+          </div>
+          <div class="m-card-num" style="justify-content:center;display:flex">Remote Monitoring</div>
+          <div class="m-card-title">Monitor from a safe distance</div>
+          <div class="m-card-desc">Technicians can remotely monitor a variety of environmental conditions from outside unsafe or difficult to reach areas.</div>
+        </div>
+      </div>
+      <div class="m-card m-card-2 reveal d1">
+        <div class="m-card-bg"></div>
+        <div class="m-card-ov"></div>
+        <div class="m-card-body" style="text-align:center">
+          <div class="m-card-ico" style="position:relative;top:auto;right:auto;margin:0 auto 16px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="m-card-num" style="justify-content:center;display:flex">Capture Data</div>
+          <div class="m-card-title">Record, analyse, and share</div>
+          <div class="m-card-desc">Collect measurement data for displaying trend and further analysis as well as sharing findings with others.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ═══════════ SERVICE CONCEPT ═══════════ -->
+<section class="section service">
+  <canvas id="particles"></canvas>
+  <div class="wrap">
+    <div class="service-head reveal">
+      <p class="sec-label">Service Concept</p>
+      <h2 class="sec-h2">Two core capabilities,<br>one seamless app</h2>
+    </div>
+    <div class="pill reveal d1">
+      <div>
+        <h3 class="pill-item-title teal">Remote connection &amp;<br>Real time monitoring</h3>
+        <p class="pill-item-desc">Allow multiple and different meters to connect through FLIR's BT protocol. Display live readings from all devices simultaneously on a single screen, from a safe distance.</p>
+      </div>
+      <div class="pill-sep-wrap">
+        <div class="pill-line"></div>
+        <div class="pill-plus">+</div>
+        <div class="pill-line"></div>
+      </div>
+      <div>
+        <h3 class="pill-item-title amber">Display trends &amp;<br>Custom report</h3>
+        <p class="pill-item-desc">Graphical and numerical representation of all measurement data. Generate detailed custom PDF reports with user-defined information, timestamps, and alarm records.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ═══════════ FEATURES ═══════════ -->
+<section class="section features">
+  <div class="wrap">
+    <div class="feat-head reveal">
+      <div>
+        <h2 class="sec-h2">Features</h2>
+      </div>
+      <p class="feat-sub">User experience is optimized with dark and light display modes, plus tap-to-inspect data windows that reveal precise readings at any graph coordinate.</p>
+    </div>
+    <div class="feat-layout reveal d1">
+      <div>
+        <p class="sec-label feat-sec-label">02 — Display and Report</p>
+        <h3 class="feat-h3">Tap any point.<br>See the exact moment.</h3>
+        <p class="feat-desc">An instantaneous data window opens when you tap any coordinate on a measurement graph. The app automatically logs every reading with date and time — making every anomaly fully traceable.</p>
+        <div class="feat-pts">
+          <div class="feat-pt"><div class="feat-dot"></div><span>Dark &amp; light display modes for any lighting condition</span></div>
+          <div class="feat-pt"><div class="feat-dot"></div><span>Tap-to-inspect: precise value at any graph point</span></div>
+          <div class="feat-pt"><div class="feat-dot"></div><span>Automatic timestamp logging for every measurement event</span></div>
+          <div class="feat-pt"><div class="feat-dot"></div><span>High and low alarm thresholds with visual indicators</span></div>
+        </div>
+      </div>
+
+      <div class="feat-phones">
+        <!-- FP1: dark mode -->
+        <div class="fp fp-1">
+          <div class="fp-pill"></div>
+          <div class="fp-hdr">
+            <div class="fp-t">Humidity ⓘ</div>
+            <div class="fp-val-row" style="margin-top:3px">
+              <span class="fp-alert">▲</span>
+              <span class="fp-num">125.09</span>
+              <span class="fp-unit">%RH</span>
+            </div>
+            <div class="fp-mm">
+              <span>MIN <b>105.58</b></span>
+              <span>AVG <b>160.58</b></span>
+              <span>MAX <b>180.95</b></span>
+            </div>
+            <svg width="100%" height="52" viewBox="0 0 172 52" fill="none">
+              <defs>
+                <linearGradient id="fg1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3BE8D3" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#3BE8D3" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 40 C14 36,24 16,44 14 C64 12,74 34,94 28 C114 22,124 6,144 8 C160 10,168 30,172 28" stroke="#3BE8D3" stroke-width="1.5" fill="none"/>
+              <path d="M0 40 C14 36,24 16,44 14 C64 12,74 34,94 28 C114 22,124 6,144 8 C160 10,168 30,172 28 L172 52 L0 52Z" fill="url(#fg1)"/>
+              <line x1="0" y1="7" x2="172" y2="7" stroke="#F25F21" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.65"/>
+              <rect x="72" y="2" width="48" height="18" rx="2" fill="rgba(0,130,117,0.94)"/>
+              <text x="96" y="10" text-anchor="middle" fill="#fff" font-size="6" font-weight="700" font-family="'Noto Sans',sans-serif">27.08 m/s</text>
+              <text x="96" y="18" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="5" font-family="'Noto Sans',sans-serif">18:12:16</text>
+            </svg>
+            <div class="fp-alarm-lbl">Last High Alarm &nbsp;Mar 26, 2021 | 16:25:52</div>
+            <div class="fp-alarm-val">126.09 %RH</div>
+          </div>
+        </div>
+
+        <!-- FP2: light mode -->
+        <div class="fp fp-2">
+          <div class="fp-pill fp-pill-light"></div>
+          <div class="fp-hdr fp-hdr-light">
+            <div class="fp-t fp-t-dark">Humidity ⓘ</div>
+            <div class="fp-val-row" style="margin-top:3px">
+              <span class="fp-alert">▲</span>
+              <span class="fp-num fp-num-dark">125.09</span>
+              <span class="fp-unit fp-unit-dark">%RH</span>
+            </div>
+            <div class="fp-mm fp-mm-dark">
+              <span>MIN <b>105.58</b></span>
+              <span>AVG <b>160.58</b></span>
+              <span>MAX <b>180.95</b></span>
+            </div>
+            <svg width="100%" height="52" viewBox="0 0 172 52" fill="none">
+              <defs>
+                <linearGradient id="fg2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3BE8D3" stop-opacity="0.22"/>
+                  <stop offset="100%" stop-color="#3BE8D3" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 40 C14 36,24 16,44 14 C64 12,74 34,94 28 C114 22,124 6,144 8 C160 10,168 30,172 28" stroke="#3BE8D3" stroke-width="1.5" fill="none"/>
+              <path d="M0 40 C14 36,24 16,44 14 C64 12,74 34,94 28 C114 22,124 6,144 8 C160 10,168 30,172 28 L172 52 L0 52Z" fill="url(#fg2)"/>
+              <line x1="0" y1="7" x2="172" y2="7" stroke="#F25F21" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.6"/>
+              <rect x="72" y="2" width="48" height="18" rx="2" fill="rgba(0,130,117,0.9)"/>
+              <text x="96" y="10" text-anchor="middle" fill="#fff" font-size="6" font-weight="700" font-family="'Noto Sans',sans-serif">27.08 m/s</text>
+              <text x="96" y="18" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="5" font-family="'Noto Sans',sans-serif">18:12:16</text>
+            </svg>
+            <div class="fp-alarm-lbl" style="color:#F25F21">Last High Alarm &nbsp;Mar 26, 2021 | 16:25:52</div>
+            <div class="fp-alarm-val fp-alarm-val-dark">126.09 %RH</div>
+          </div>
+        </div>
+
+        <!-- FP3: report/detail view -->
+        <div class="fp fp-3">
+          <div class="fp-pill"></div>
+          <div class="fp-hdr" style="padding-bottom:8px">
+            <div class="fp-t" style="margin-bottom:2px">LT250W-005</div>
+            <div class="fp-s">⊙ Humidity, Temperature</div>
+            <div class="fp-s">📅 Jan 13 – Jan 15, 2021</div>
+            <div class="fp-s" style="margin-bottom:6px">⏱ 14:08:50 – 23:06:48</div>
+            <div class="fp-t" style="font-size:0.54rem;margin-bottom:3px">Humidity ⓘ <span style="color:var(--sec);font-weight:400;float:right">%RH</span></div>
+            <svg width="100%" height="48" viewBox="0 0 172 48" fill="none">
+              <defs>
+                <linearGradient id="fg3" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3BE8D3" stop-opacity="0.22"/>
+                  <stop offset="100%" stop-color="#3BE8D3" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 36 C14 30,24 12,44 10 C64 8,74 30,94 24 C114 18,124 4,144 6 C160 8,168 26,172 24" stroke="#3BE8D3" stroke-width="1.5" fill="none"/>
+              <path d="M0 36 C14 30,24 12,44 10 C64 8,74 30,94 24 C114 18,124 4,144 6 C160 8,168 26,172 24 L172 48 L0 48Z" fill="url(#fg3)"/>
+            </svg>
+            <div class="fp-t" style="font-size:0.54rem;margin-bottom:3px;margin-top:5px">Temperature ⓘ <span style="color:var(--sec);font-weight:400;float:right">°C</span></div>
+            <svg width="100%" height="48" viewBox="0 0 172 48" fill="none">
+              <defs>
+                <linearGradient id="fg4" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3BE8D3" stop-opacity="0.2"/>
+                  <stop offset="100%" stop-color="#3BE8D3" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 38 C14 34,26 18,46 16 C66 14,76 34,96 28 C116 22,128 8,148 10 C164 12,170 30,172 28" stroke="#3BE8D3" stroke-width="1.5" fill="none"/>
+              <path d="M0 38 C14 34,26 18,46 16 C66 14,76 34,96 28 C116 22,128 8,148 10 C164 12,170 30,172 28 L172 48 L0 48Z" fill="url(#fg4)"/>
+              <line x1="0" y1="7" x2="172" y2="7" stroke="#F25F21" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.55"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ═══════════ STATS ═══════════ -->
+<div class="stats">
+  <div class="stats-l reveal">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">High efficiency and quick response, also has good quality output. Great communication and knowledge about mobile app launches. Very patient team willing to work through challenges.</p>
+    <div class="quote-author">
+      <div class="author-ava">👤</div>
+      <div>
+        <div class="author-name">Vernis Yang</div>
+        <div class="author-role">Director R&amp;D, FLIR Systems</div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-r reveal d1">
+    <div class="stats-num">
+      <span class="n-hi" id="stat-num">1,000,000</span><span class="n-plus">+</span>
+    </div>
+    <div class="stats-word">downloads</div>
+    <div class="stats-rule"></div>
+    <div class="stats-sub">Ratings of <strong>4.7+</strong> / 5 on Play &amp; App Stores</div>
+  </div>
+</div>
+
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="footer-l">
+    FLIR Environmental Monitoring App &nbsp;·&nbsp; Case Study by <strong>Bahwan Cybertek</strong>
+  </div>
+  <div class="footer-r">© 2024 Bahwan Cybertek</div>
+</footer>
+
+
+<script>
+/* ── Scroll reveal ── */
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── Particle canvas (Service Concept bokeh) ── */
+(function () {
+  const canvas = document.getElementById('particles');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+
+  class P {
+    constructor() { this.init(); }
+    init() {
+      this.x    = Math.random() * canvas.width;
+      this.y    = canvas.height * (0.5 + Math.random() * 0.5);
+      this.r    = Math.random() * 22 + 5;
+      this.baseA = Math.random() * 0.1 + 0.02;
+      this.vx   = (Math.random() - 0.5) * 0.25;
+      this.vy   = -(Math.random() * 0.35 + 0.08);
+      this.life = Math.random() * 180;
+      this.max  = Math.random() * 180 + 80;
+    }
+    step() {
+      this.life++;
+      if (this.life > this.max) this.init();
+      this.x += this.vx;
+      this.y += this.vy;
+      const t = this.life / this.max;
+      const a = this.baseA * Math.sin(t * Math.PI);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,110,80,${a})`;
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 45; i++) particles.push(new P());
+
+  function frame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => p.step());
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  frame();
+})();
+
+/* ── Stat counter ── */
+(function () {
+  const el = document.getElementById('stat-num');
+  if (!el) return;
+  let fired = false;
+  const target = 1000000;
+
+  new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !fired) {
+      fired = true;
+      const dur = 2200, start = performance.now();
+      function tick(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - t, 4);
+        el.textContent = Math.floor(ease * target).toLocaleString();
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+  }, { threshold: 0.5 }).observe(el);
+})();
+
+/* ── Custom cursor + device 3D tilt ── */
+(function() {
+  const dot  = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  const wrap = document.getElementById('deviceWrap');
+  const img  = document.getElementById('deviceImg');
+
+  document.addEventListener('mousemove', e => {
+    dot.style.left  = e.clientX + 'px';
+    dot.style.top   = e.clientY + 'px';
+    ring.style.left = e.clientX + 'px';
+    ring.style.top  = e.clientY + 'px';
+  });
+
+  const heroRight = document.querySelector('.hero-right');
+  if (heroRight) {
+    heroRight.addEventListener('mouseenter', () => {
+      dot.classList.add('active');
+      ring.classList.add('active');
+    });
+    heroRight.addEventListener('mouseleave', () => {
+      dot.classList.remove('active');
+      ring.classList.remove('active');
+      ring.classList.remove('hover');
+      img.style.transform = '';
+      img.style.animationPlayState = 'running';
+    });
+  }
+
+  if (wrap) {
+    wrap.addEventListener('mouseenter', () => {
+      ring.classList.add('hover');
+      img.style.animationPlayState = 'paused';
+    });
+    wrap.addEventListener('mouseleave', () => {
+      ring.classList.remove('hover');
+      img.style.transform = '';
+      img.style.animationPlayState = 'running';
+    });
+    wrap.addEventListener('mousemove', e => {
+      const r = wrap.getBoundingClientRect();
+      const x = (e.clientX - r.left)  / r.width  - 0.5;
+      const y = (e.clientY - r.top)   / r.height - 0.5;
+      img.style.transform = `perspective(1000px) rotateY(${x * 14}deg) rotateX(${-y * 10}deg) scale(1.02)`;
+    });
+  }
+})();
+</script>
+</body>
+</html>
