@@ -12,6 +12,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#04050d;
+  --nav-bg:rgba(4,5,13,0.6);
   --blue:#2563EB;
   --cyan:#06b6d4;
   --violet:#7c3aed;
@@ -93,7 +94,7 @@ nav{
   position:fixed;top:20px;left:50%;transform:translateX(-50%);
   width:calc(100% - 80px);max-width:1320px;
   height:64px;
-  background:rgba(4,5,13,0.6);
+  background:var(--nav-bg);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1px solid var(--border);
   border-radius:50px;
@@ -102,7 +103,7 @@ nav{
   z-index:100;
   transition:background 0.3s,border-color 0.3s;
 }
-nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
+nav.scrolled{border-color:rgba(255,255,255,0.1)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-links{display:flex;align-items:center;gap:4px}
 .nav-links a{
@@ -126,7 +127,7 @@ nav.scrolled{background:rgba(4,5,13,0.85);border-color:rgba(255,255,255,0.1)}
 .nav-dropdown{
   position:absolute;top:100%;
   left:50%;transform:translateX(-50%) translateY(-4px);
-  background:rgba(4,5,13,0.6);
+  background:var(--nav-bg);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1px solid rgba(255,255,255,0.07);
   border-radius:18px;
@@ -703,7 +704,7 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
       <div class="nav-dropdown" role="menu">
         <a href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer" role="menuitem">NOVA</a>
         <a href="fitting.html" role="menuitem">Dynamic Cycling Fit</a>
-        <a href="https://ycc-bct.github.io/bct-taipei-website/flir/flir.html" role="menuitem" style="display:none">FLIR</a>
+        <a href="https://ycc-bct.github.io/bct-taipei-website/flir/flir.html" role="menuitem">FLIR</a>
         <a href="https://ycc-bct.github.io/bct-taipei-website/gac.html" target="_blank" rel="noopener noreferrer" role="menuitem" style="display:none">GAC</a>
       </div>
     </div>
@@ -1022,9 +1023,13 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-top:4px}
 </div>
 
 <script>
-// Nav scroll
+// Nav scroll — sync --nav-bg between header and dropdown
 const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>80),{passive:true});
+window.addEventListener('scroll',()=>{
+  const scrolled=scrollY>80;
+  nav.classList.toggle('scrolled',scrolled);
+  document.documentElement.style.setProperty('--nav-bg',scrolled?'rgba(4,5,13,0.85)':'rgba(4,5,13,0.6)');
+},{passive:true});
 
 // Work dropdown
 const navWorkWrap=document.getElementById('navWorkWrap');

@@ -12,6 +12,7 @@
 
     :root {
       --bg:        #04050d;
+      --nav-bg:    rgba(4,5,13,0.6);
       --accent:    #e1ff4b;
       --dark:      #121212;
       --border:    rgba(255,255,255,0.08);
@@ -32,7 +33,7 @@
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
       width: calc(100% - 80px); max-width: 1320px;
       height: 64px;
-      background: rgba(4,5,13,0.6);
+      background: var(--nav-bg);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 50px;
@@ -41,7 +42,7 @@
       z-index: 200;
       transition: background .3s, border-color .3s;
     }
-    nav.scrolled { background: rgba(4,5,13,0.9); border-color: rgba(255,255,255,0.12); }
+    nav.scrolled { border-color: rgba(255,255,255,0.12); }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-links { display: flex; align-items: center; gap: 4px; }
     .nav-links a {
@@ -73,7 +74,7 @@
       position: absolute;
       top: 100%;
       left: 50%; transform: translateX(-50%) translateY(-4px);
-      background: rgba(4,5,13,0.6);
+      background: var(--nav-bg);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 18px;
@@ -541,7 +542,7 @@
       <div class="nav-dropdown" role="menu">
         <a href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer" role="menuitem">NOVA</a>
         <a href="fitting.html" role="menuitem">Dynamic Cycling Fit</a>
-        <a href="https://ycc-bct.github.io/bct-taipei-website/flir/flir.html" role="menuitem" style="display:none">FLIR</a>
+        <a href="https://ycc-bct.github.io/bct-taipei-website/flir/flir.html" role="menuitem">FLIR</a>
         <a href="gac.html" target="_blank" rel="noopener noreferrer" role="menuitem" style="display:none">GAC</a>
       </div>
     </div>
@@ -769,10 +770,12 @@
 </footer>
 
 <script>
-  // Nav scroll
+  // Nav scroll — sync --nav-bg between header and dropdown
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', scrollY > 80);
+    const scrolled = scrollY > 80;
+    nav.classList.toggle('scrolled', scrolled);
+    document.documentElement.style.setProperty('--nav-bg', scrolled ? 'rgba(4,5,13,0.85)' : 'rgba(4,5,13,0.6)');
   }, { passive: true });
 
   // Feature tabs (Sec2)
