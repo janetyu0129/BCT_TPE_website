@@ -331,16 +331,19 @@
       grid-template-columns: 60fr 40fr;
     }
     .sec4-ipad-wrap {
-      position: relative;
       height: 660px;
-      overflow: hidden;
       background: linear-gradient(135deg, #e1ff4b 0%, #e9ff78 25%, #f0ffa5 50%, #f8ffd2 75%, #fff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
     .sec4-ipad-wrap img.ipad-img {
-      position: absolute;
-      bottom: -80px; left: -100px;
-      width: 130%; height: auto;
+      width: auto;
+      height: 100%;
+      max-width: 100%;
       object-fit: contain;
+      display: block;
     }
     .sec4-autofit {
       margin-top: 80px;
