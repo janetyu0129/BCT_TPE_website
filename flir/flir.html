@@ -6,7 +6,7 @@
   <title>FLIR — Seamless Connectivity for Your Specialized Sensors</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,6 +25,7 @@
       --muted:      #899595;
       --text:       #FFFFFF;
       --ff:         'Noto Sans', system-ui, sans-serif;
+      --nav-bg:     rgba(4,5,13,0.6);
     }
 
     html { scroll-behavior: smooth; }
@@ -38,34 +39,80 @@
       overflow-x: hidden;
     }
 
-    /* ─── NAV ─── */
+    /* ─── BCT NAV ─── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 80px); max-width: 1320px;
+      height: 64px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 50px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 80px;
-      background: rgba(30,30,30,0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(59,232,211,0.1);
+      padding: 0 8px 0 24px;
+      z-index: 200;
+      transition: background 0.3s, border-color 0.3s;
     }
-    .nav-brand {
-      display: flex; align-items: center; gap: 14px; text-decoration: none;
+    nav.scrolled { border-color: rgba(255,255,255,0.1); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 4px; }
+    .nav-links a {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.45);
+      text-decoration: none; padding: 8px 16px; border-radius: 50px;
+      transition: color 0.2s, background 0.2s;
     }
-    .nav-badge {
-      width: 38px; height: 38px;
-      background: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
-      color: #fff;
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-work-wrap { position: relative; }
+    .nav-work-btn {
+      font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.45); background: none; border: none; cursor: pointer;
+      padding: 8px 16px; border-radius: 50px;
+      display: flex; align-items: center; gap: 5px;
+      transition: color 0.2s, background 0.2s;
     }
-    .nav-wordmark {
-      font-size: 1.35rem; font-weight: 800; letter-spacing: 0.18em;
-      color: var(--text);
+    .nav-work-btn svg { transition: transform 0.2s; }
+    .nav-work-wrap:hover .nav-work-btn,
+    .nav-work-wrap.open .nav-work-btn { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-work-wrap:hover .nav-work-btn svg,
+    .nav-work-wrap.open .nav-work-btn svg { transform: rotate(180deg); }
+    .nav-dropdown {
+      position: absolute; top: 100%;
+      left: 50%; transform: translateX(-50%) translateY(-4px);
+      background: var(--nav-bg);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 18px 0 8px; min-width: 190px;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+      z-index: 300;
     }
-    .nav-credit {
-      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--muted);
+    .nav-work-wrap:hover .nav-dropdown,
+    .nav-work-wrap.open .nav-dropdown {
+      opacity: 1; visibility: visible; pointer-events: all;
+      transform: translateX(-50%) translateY(0);
     }
-    .nav-credit span { color: var(--graph); }
+    .nav-dropdown a {
+      display: block; text-align: center; padding: 13px 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.45);
+      text-decoration: none; white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+      border-radius: 10px; margin: 0 6px;
+    }
+    .nav-dropdown a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    .nav-btn {
+      display: inline-flex; align-items: center;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 14px;
+      padding: 10px 24px; border-radius: 50px; border: none;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 0 24px rgba(37,99,235,0.35);
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .nav-btn:hover { box-shadow: 0 0 40px rgba(37,99,235,0.55); transform: scale(1.03); }
 
     /* ─── REVEAL ─── */
     .reveal {
@@ -454,27 +501,55 @@
     }
     .stats-sub strong { color: var(--lo-line); font-weight: 700; }
 
-    /* ─── FOOTER ─── */
+    /* ─── BCT FOOTER ─── */
     footer {
-      background: #111;
-      border-top: 1px solid rgba(59,232,211,0.08);
-      padding: 28px 80px;
-      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 2;
+      background: rgba(0,0,0,0.5);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 64px 64px 40px;
+      backdrop-filter: blur(8px);
     }
-    .footer-l { font-size: 0.76rem; color: var(--sec); }
-    .footer-l strong { color: var(--graph); }
-    .footer-r { font-size: 0.7rem; color: var(--sec); letter-spacing: 0.05em; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+      padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 36px;
+    }
+    .f-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .f-desc { font-size: 14px; line-height: 2; color: rgba(255,255,255,0.45); max-width: 280px; }
+    .f-col h4 { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-bottom: 18px; font-family: 'Space Grotesk', sans-serif; }
+    .f-links { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .f-links a { font-size: 14px; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; font-family: 'Space Grotesk', sans-serif; }
+    .f-links a:hover { color: #fff; }
+    .footer-btm { display: flex; justify-content: space-between; align-items: center; }
+    .f-copy, .f-parent { font-size: 12px; color: rgba(255,255,255,0.25); font-family: 'Space Grotesk', sans-serif; }
   </style>
 </head>
 <body>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav>
-  <a class="nav-brand" href="#">
-    <div class="nav-badge">FLIR</div>
-    <span class="nav-wordmark">FLIR</span>
+<nav id="nav">
+  <a href="../Claude/BCT Taipei Dark.html" class="nav-logo">
+    <img src="../Claude/uploads/ic_bct_logo_white.png" alt="Bahwan CyberTek" style="height:34px;width:auto;display:block">
   </a>
-  <div class="nav-credit">Case Study by <span>Bahwan Cybertek</span></div>
+  <div class="nav-links">
+    <a href="../Claude/BCT Taipei Dark.html#about">About</a>
+    <a href="../Claude/BCT Taipei Dark.html#services">Services</a>
+    <a href="../Claude/BCT Taipei Dark.html#process">Process</a>
+    <div class="nav-work-wrap" id="navWorkWrap">
+      <button class="nav-work-btn" aria-haspopup="true" aria-expanded="false">
+        Work
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2,4 6,8 10,4"/>
+        </svg>
+      </button>
+      <div class="nav-dropdown" role="menu">
+        <a href="https://dev.bct-nova.net/" target="_blank" rel="noopener noreferrer" role="menuitem">NOVA</a>
+        <a href="../Claude/fitting.html" role="menuitem">Dynamic Cycling Fit</a>
+        <a href="flir.html" role="menuitem">FLIR</a>
+        <a href="https://ycc-bct.github.io/bct-taipei-website/gac.html" target="_blank" rel="noopener noreferrer" role="menuitem" style="display:none">GAC</a>
+      </div>
+    </div>
+  </div>
+  <a href="../Claude/BCT Taipei Dark.html#cta" class="nav-btn">Contact Us</a>
 </nav>
 
 
@@ -743,14 +818,56 @@
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <div class="footer-l">
-    FLIR Environmental Monitoring App &nbsp;·&nbsp; Case Study by <strong>Bahwan Cybertek</strong>
+  <div class="footer-grid">
+    <div>
+      <div class="f-brand"><img src="../Claude/uploads/ic_bct_logo_white.png" alt="Bahwan CyberTek" style="height:28px;width:auto;opacity:0.7"></div>
+      <p class="f-desc">Global digital transformation. Delivering innovative technology since 1999.</p>
+    </div>
+    <div class="f-col"><h4>Services</h4><ul class="f-links">
+      <li><a href="#">AI Application</a></li>
+      <li><a href="#">Data Platform</a></li>
+      <li><a href="#">Cloud Services</a></li>
+      <li><a href="#">UI / UX Design</a></li>
+      <li><a href="#">Mobile &amp; Web Apps</a></li>
+    </ul></div>
+    <div class="f-col"><h4>Company</h4><ul class="f-links">
+      <li><a href="../Claude/BCT Taipei Dark.html#about">About Us</a></li>
+      <li><a href="../Claude/BCT Taipei Dark.html#process">Our Process</a></li>
+      <li><a href="../Claude/BCT Taipei Dark.html#cases">Case Studies</a></li>
+      <li><a href="#">Careers</a></li>
+    </ul></div>
+    <div class="f-col"><h4>Contact</h4><ul class="f-links">
+      <li><a href="#">hello@bcttaipei.com</a></li>
+      <li><a href="#">LinkedIn</a></li>
+      <li><a href="#">Taipei, Taiwan</a></li>
+    </ul></div>
   </div>
-  <div class="footer-r">© 2024 Bahwan Cybertek</div>
+  <div class="footer-btm">
+    <div class="f-copy">© 2026 BCT Taipei. All rights reserved.</div>
+    <div class="f-parent">Bahwan CyberTek Group</div>
+  </div>
 </footer>
 
 
 <script>
+/* ── Nav scroll + dropdown ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  const scrolled = scrollY > 80;
+  nav.classList.toggle('scrolled', scrolled);
+  document.documentElement.style.setProperty('--nav-bg', scrolled ? 'rgba(4,5,13,0.85)' : 'rgba(4,5,13,0.6)');
+}, { passive: true });
+const navWorkWrap = document.getElementById('navWorkWrap');
+navWorkWrap.querySelector('.nav-work-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  const open = navWorkWrap.classList.toggle('open');
+  navWorkWrap.querySelector('.nav-work-btn').setAttribute('aria-expanded', open);
+});
+document.addEventListener('click', () => {
+  navWorkWrap.classList.remove('open');
+  navWorkWrap.querySelector('.nav-work-btn').setAttribute('aria-expanded', false);
+});
+
 /* ── Scroll reveal ── */
 const obs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
