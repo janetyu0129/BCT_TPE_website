@@ -193,8 +193,12 @@
       border-radius: 20px;
       overflow: hidden;
     }
-    .ipad-device img {
+    .sec2-video {
       width: 100%; height: 100%; object-fit: contain;
+      display: none;
+    }
+    .sec2-video.active {
+      display: block;
     }
 
     /* ── SEC3: HOW WE DESIGN ── */
@@ -584,7 +588,9 @@
     <div class="ipad-container">
       <div class="ipad-glow-bg"></div>
       <div class="ipad-device">
-        <img src="https://www.figma.com/api/mcp/asset/0c9942c7-4ece-4cd2-9cba-e257f463748e" alt="DCF App on iPad" onerror="this.src='https://www.figma.com/api/mcp/asset/d24e05f0-1d10-4431-82f9-8deb4332c762'">
+        <video class="sec2-video active" src="uploads/fitting/fitting_flow1.mp4" muted playsinline preload="auto"></video>
+        <video class="sec2-video" src="uploads/fitting/fitting_flow2.mp4" muted playsinline preload="auto"></video>
+        <video class="sec2-video" src="uploads/fitting/fitting_flow3.mp4" muted playsinline preload="auto"></video>
       </div>
     </div>
   </div>
@@ -778,27 +784,37 @@
     document.documentElement.style.setProperty('--nav-bg', scrolled ? 'rgba(4,5,13,0.85)' : 'rgba(4,5,13,0.6)');
   }, { passive: true });
 
-  // Feature tabs (Sec2)
+  // Sec2 — video-driven feature tabs
   const items = document.querySelectorAll('.feature-item');
-  let autoTimer;
-  function activateTab(idx) {
+  const videos = document.querySelectorAll('.sec2-video');
+
+  function switchTo(idx) {
     items.forEach((el, i) => el.classList.toggle('active', i === idx));
-  }
-  function startAuto() {
-    let i = 0;
-    autoTimer = setInterval(() => {
-      i = (i + 1) % items.length;
-      activateTab(i);
-    }, 4000);
-  }
-  items.forEach((el, idx) => {
-    el.addEventListener('click', () => {
-      clearInterval(autoTimer);
-      activateTab(idx);
-      startAuto();
+    videos.forEach((v, i) => {
+      if (i === idx) {
+        v.classList.add('active');
+        v.currentTime = 0;
+        v.play();
+      } else {
+        v.classList.remove('active');
+        v.pause();
+        v.currentTime = 0;
+      }
     });
+  }
+
+  // Auto-advance on video end
+  videos.forEach((v, i) => {
+    v.addEventListener('ended', () => switchTo((i + 1) % videos.length));
   });
-  startAuto();
+
+  // Click left panel to jump to that video
+  items.forEach((el, idx) => {
+    el.addEventListener('click', () => switchTo(idx));
+  });
+
+  // Kick off first video
+  switchTo(0);
 
   // Work dropdown (click-toggle for touch)
   const navWorkWrap = document.getElementById('navWorkWrap');
