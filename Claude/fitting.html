@@ -190,8 +190,6 @@
     .ipad-device {
       position: relative;
       width: 100%; height: 100%;
-      border-radius: 20px;
-      overflow: hidden;
     }
     .sec2-video {
       width: 100%; height: 100%; object-fit: contain;
@@ -199,6 +197,14 @@
     }
     .sec2-video.active {
       display: block;
+    }
+    .ipad-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      z-index: 2;
     }
 
     /* ── SEC3: HOW WE DESIGN ── */
@@ -593,6 +599,7 @@
         <video class="sec2-video active" src="uploads/fitting/fitting_flow1.mp4" muted playsinline preload="auto"></video>
         <video class="sec2-video" src="uploads/fitting/fitting_flow2.mp4" muted playsinline preload="auto"></video>
         <video class="sec2-video" src="uploads/fitting/fitting_flow3.mp4" muted playsinline preload="auto"></video>
+        <img class="ipad-frame" src="uploads/fitting/iPad.png" alt="">
       </div>
     </div>
   </div>
