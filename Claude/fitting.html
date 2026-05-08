@@ -129,74 +129,97 @@
       filter: drop-shadow(0 4px 24px rgba(0,0,0,0.35));
     }
 
-    /* ── SEC2: FEATURES ── */
+    /* ── SEC2: FEATURES (vertical, white bg) ── */
     .sec2 {
-      position: relative;
-      background: #111116;
-      padding: 100px 80px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
+      background: #fff;
+      padding: 100px 40px 120px;
+      text-align: center;
       overflow: hidden;
     }
-    .sec2-glow {
+    .sec2-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+
+    /* ── Text slides ── */
+    .sec2-text-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 680px;
+      min-height: 230px;
+    }
+    .sec2-slide {
       position: absolute;
-      width: 480px; height: 480px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(225,255,75,0.06) 0%, transparent 70%);
-      right: 100px; top: 50%;
-      transform: translateY(-50%);
+      top: 0; left: 0; right: 0;
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
       pointer-events: none;
     }
-    .features-list { display: flex; flex-direction: column; }
-    .feature-item {
-      padding: 40px 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      opacity: 0.38;
-      transition: opacity .35s;
+    .sec2-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
-    .feature-item:first-child { border-top: 1px solid var(--border); }
-    .feature-item.active { opacity: 1; }
-    .feature-item h3 {
-      font-size: 28px; font-weight: 600; color: #fff;
-      line-height: 40px; margin-bottom: 12px;
-    }
-    .feature-item p {
-      font-size: 17px; font-weight: 400;
-      color: rgba(255,255,255,0.65);
-      line-height: 30px; letter-spacing: -0.17px;
+    .sec2-slide.exit {
+      opacity: 0;
+      transform: translateY(-36px);
     }
     .feature-num {
-      font-size: 11px; font-weight: 600; letter-spacing: 2px;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: #aaa;
+      margin-bottom: 18px;
     }
+    .sec2-slide h3 {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 700;
+      color: #0a0a12;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .sec2-slide p {
+      font-size: 17px; font-weight: 400;
+      color: #555;
+      line-height: 1.75;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* ── iPad visual ── */
     .sec2-visual {
-      display: flex; align-items: center; justify-content: center;
-      position: relative; z-index: 2;
-    }
-    .ipad-container {
+      width: 100%;
+      max-width: 720px;
       position: relative;
-      width: 480px; height: 380px;
-    }
-    .ipad-glow-bg {
-      position: absolute;
-      inset: -30px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(225,255,75,0.08) 0%, transparent 65%);
     }
     .ipad-device {
       position: relative;
-      width: 100%; height: 100%;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+    }
+    @keyframes sec2ZoomIn {
+      from { transform: scale(1.07); }
+      to   { transform: scale(1); }
+    }
+    /* iPad device: zoom-enter applies to the whole container (frame + video together) */
+    .ipad-device.zoom-enter {
+      animation: sec2ZoomIn 0.85s ease forwards;
     }
     .sec2-video {
-      width: 100%; height: 100%; object-fit: contain;
-      display: none;
+      position: absolute;
+      top: 2%; left: 2%;       /* shrink 4% inward on all sides */
+      width: 96%; height: 96%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      z-index: 1;
     }
     .sec2-video.active {
-      display: block;
+      opacity: 1;
     }
     .ipad-frame {
       position: absolute;
@@ -208,78 +231,67 @@
     }
 
     /* ── SEC3: HOW WE DESIGN ── */
+    /* ── SEC2 + SEC3 shared background wrapper ── */
+    .sec23-wrap {
+      position: relative;
+      background: #fff;
+    }
+    .sec23-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('uploads/fitting/img_dcf_bk_line.svg') no-repeat center center / cover;
+      opacity: 0.2;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .sec2 {
+      background: transparent;
+      position: relative;
+      z-index: 1;
+    }
     .sec3 {
       position: relative;
-      background: #0a0a12;
-      padding: 140px 80px 100px;
+      background: transparent;
+      padding: 120px 80px 120px;
       overflow: hidden;
-    }
-    .sec3-bg-line {
-      position: absolute; inset: 0;
-      background: url('https://www.figma.com/api/mcp/asset/9a01ff6d-58f6-43e1-923e-1a08c15fd6f4') center bottom / cover no-repeat;
-      opacity: 0.25;
-      pointer-events: none;
+      z-index: 1;
     }
     .sec3-inner {
       position: relative; z-index: 2;
       max-width: 1280px; margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 100px;
-      align-items: start;
+      grid-template-columns: 1fr 2fr;
+      grid-template-areas:
+        "text  ."
+        "uikit demos";
+      column-gap: 80px;
+      row-gap: 48px;
     }
+    .sec3-text { grid-area: text; }
     .sec3-eyebrow {
       font-size: 12px; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 24px;
+      color: #aaa; margin-bottom: 20px;
     }
     .sec3-title {
-      font-size: 40px; font-weight: 600; color: #fff;
-      line-height: 56px; margin-bottom: 24px;
+      font-size: 36px; font-weight: 700; color: #0a0a12;
+      line-height: 1.2; margin-bottom: 20px;
     }
     .sec3-body {
-      font-size: 18px; font-weight: 400;
-      color: rgba(255,255,255,0.6);
-      line-height: 32px; letter-spacing: -0.18px;
-      margin-bottom: 60px;
+      font-size: 16px; font-weight: 400;
+      color: #555;
+      line-height: 1.75; letter-spacing: -0.1px;
+      margin-bottom: 0;
     }
-    .uikit-block { margin-top: auto; }
-    .uikit-label {
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 1.5px; text-transform: uppercase;
-      color: rgba(255,255,255,0.3); margin-bottom: 12px;
+    .uikit-img {
+      grid-area: uikit;
+      width: 100%; display: block;
     }
-    .uikit-swatches {
-      display: flex; gap: 6px; margin-bottom: 32px;
+    .demos-img {
+      grid-area: demos;
+      width: 100%; display: block;
     }
-    .swatch {
-      width: 72px; height: 40px; border-radius: 8px;
-    }
-    .uikit-fonts {
-      display: flex; gap: 48px;
-    }
-    .font-block-label {
-      font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; color: rgba(255,255,255,0.35);
-      margin-bottom: 6px;
-    }
-    .font-block-aa {
-      font-size: 44px; font-weight: 700; color: #fff; line-height: 1;
-    }
-    .font-mono-aa { font-family: 'Courier New', monospace; }
-
-    .app-screens {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .app-screen {
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-    }
-    .app-screen img { width: 100%; display: block; }
-    .app-screen-shift { margin-top: 48px; }
 
     /* ── SEC4: TECHNOLOGY ── */
     .sec4 {
@@ -379,6 +391,15 @@
       padding: 100px 0 80px;
       overflow: hidden;
     }
+    .deliver::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 50%; height: 100%;
+      background: url('uploads/fitting/img_dcf_bk_logo.svg') no-repeat top right / contain;
+      pointer-events: none;
+      z-index: 0;
+    }
     .deliver-inner {
       max-width: 1440px; margin: 0 auto;
       padding: 0 80px;
@@ -418,7 +439,8 @@
     }
 
     /* ── OUR WORKS ── */
-    .our-works { background: var(--dark); padding: 100px 80px; }
+    .our-works { background: var(--dark); padding: 100px 0 80px; }
+    .works-inner { max-width: 1440px; margin: 0 auto; padding: 0 80px; }
     .works-header {
       display: flex; align-items: flex-end; justify-content: space-between;
       margin-bottom: 52px;
@@ -570,90 +592,62 @@
   </div>
 </section>
 
+<!-- ── SEC2 + SEC3: shared background wrap ── -->
+<div class="sec23-wrap">
+
 <!-- ── SEC2: THREE KEY FEATURES ── -->
 <section class="sec2">
-  <div class="sec2-glow"></div>
+  <div class="sec2-inner">
 
-  <div class="features-list">
-    <div class="feature-item active" data-idx="0">
-      <div class="feature-num">01</div>
-      <h3>Start from a tablet</h3>
-      <p>Dynamic Cycling Fit (DCF) is an app designed to help cyclists optimise their bike setup for maximum comfort, efficiency, and performance — only using a tablet can make it all done.</p>
+    <!-- Animated text slides -->
+    <div class="sec2-text-wrap">
+      <div class="sec2-slide" data-idx="0">
+        <div class="feature-num">01</div>
+        <h3>Start from a tablet</h3>
+        <p>Dynamic Cycling Fit (DCF) is an app designed to help cyclists optimise their bike setup for maximum comfort, efficiency, and performance — only using a tablet can make it all done.</p>
+      </div>
+      <div class="sec2-slide" data-idx="1">
+        <div class="feature-num">02</div>
+        <h3>AutoFit using Machine Learning</h3>
+        <p>AutoFit is an innovative technology using machine learning to detect the user's joint points and calculate fitting information in real-time.</p>
+      </div>
+      <div class="sec2-slide" data-idx="2">
+        <div class="feature-num">03</div>
+        <h3>No sweat for getting results</h3>
+        <p>By using our technology, user data can be quickly integrated and analysed, producing real-time insights and results for more accurate experience.</p>
+      </div>
     </div>
-    <div class="feature-item" data-idx="1">
-      <div class="feature-num">02</div>
-      <h3>AutoFit using Machine Learning</h3>
-      <p>AutoFit is an innovative technology using machine learning to detect the user's joint points and calculate fitting information in real-time.</p>
-    </div>
-    <div class="feature-item" data-idx="2">
-      <div class="feature-num">03</div>
-      <h3>No sweat for getting results</h3>
-      <p>By using our technology, user data can be quickly integrated and analysed, producing real-time insights and results for more accurate experience.</p>
-    </div>
-  </div>
 
-  <div class="sec2-visual">
-    <div class="ipad-container">
-      <div class="ipad-glow-bg"></div>
+    <!-- iPad with videos -->
+    <div class="sec2-visual">
       <div class="ipad-device">
-        <video class="sec2-video active" src="uploads/fitting/fitting_flow1.mp4" muted playsinline preload="auto"></video>
-        <video class="sec2-video" src="uploads/fitting/fitting_flow2.mp4" muted playsinline preload="auto"></video>
-        <video class="sec2-video" src="uploads/fitting/fitting_flow3.mp4" muted playsinline preload="auto"></video>
+        <video class="sec2-video" data-idx="0" src="uploads/fitting/fitting_flow1.mp4" muted playsinline preload="auto"></video>
+        <video class="sec2-video" data-idx="1" src="uploads/fitting/fitting_flow2.mp4" muted playsinline preload="auto"></video>
+        <video class="sec2-video" data-idx="2" src="uploads/fitting/fitting_flow3.mp4" muted playsinline preload="auto"></video>
         <img class="ipad-frame" src="uploads/fitting/iPad.png" alt="">
       </div>
     </div>
+
   </div>
 </section>
 
 <!-- ── SEC3: HOW WE DESIGN ── -->
 <section class="sec3">
-  <div class="sec3-bg-line"></div>
   <div class="sec3-inner">
 
-    <div class="sec3-left reveal">
+    <div class="sec3-text reveal">
       <div class="sec3-eyebrow">Design &amp; UX</div>
       <h2 class="sec3-title">How we design</h2>
       <p class="sec3-body">We focused on creating an intuitive and easy-to-use interface, ensuring that both professional technicians and first-time users can quickly get started.</p>
-
-      <div class="uikit-block">
-        <div class="uikit-label">Colour palette</div>
-        <div class="uikit-swatches">
-          <div class="swatch" style="background:#0a0a12;border:1px solid rgba(255,255,255,0.1)"></div>
-          <div class="swatch" style="background:#1a1f1f"></div>
-          <div class="swatch" style="background:#e1ff4b"></div>
-          <div class="swatch" style="background:#ffffff;border:1px solid rgba(0,0,0,0.1)"></div>
-        </div>
-        <div class="uikit-label">Typography</div>
-        <div class="uikit-fonts">
-          <div>
-            <div class="font-block-label">Manrope</div>
-            <div class="font-block-aa">Aa</div>
-          </div>
-          <div>
-            <div class="font-block-label">Ingram Mono</div>
-            <div class="font-block-aa font-mono-aa">Aa</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="app-screens reveal">
-      <div class="app-screen">
-        <img src="https://www.figma.com/api/mcp/asset/efc3ef05-6eb4-4a04-b1d7-85c6d986531a" alt="DCF App — Log In">
-      </div>
-      <div class="app-screen app-screen-shift">
-        <img src="https://www.figma.com/api/mcp/asset/f4246384-ac1e-48f5-98c3-d03ecfc46d5f" alt="DCF App — Choose Category">
-      </div>
-      <div class="app-screen">
-        <img src="https://www.figma.com/api/mcp/asset/922748da-8d74-4751-9307-b810f2644ce1" alt="DCF App — Body Dimension">
-      </div>
-      <div class="app-screen app-screen-shift">
-        <img src="https://www.figma.com/api/mcp/asset/3debe886-560c-4db3-acf3-d8172a410bcc" alt="DCF App — Setup Bike">
-      </div>
-    </div>
+    <img class="uikit-img reveal" src="uploads/fitting/img_uikit.svg" alt="UI Kit — colour palette and typography">
+    <img class="demos-img reveal" src="uploads/fitting/img_demos.svg" alt="App screens">
 
   </div>
 </section>
+
+</div><!-- end .sec23-wrap -->
 
 <!-- ── SEC4: TECHNOLOGY ── -->
 <section class="sec4">
@@ -715,6 +709,7 @@
 
 <!-- ── OUR WORKS ── -->
 <section class="our-works">
+  <div class="works-inner">
   <div class="works-header reveal">
     <div>
       <h2 class="works-title">Our works</h2>
@@ -750,6 +745,7 @@
       </a>
     </div>
   </div>
+  </div><!-- end .works-inner -->
 </section>
 
 <!-- FOOTER -->
@@ -793,37 +789,78 @@
     document.documentElement.style.setProperty('--nav-bg', scrolled ? 'rgba(4,5,13,0.85)' : 'rgba(4,5,13,0.6)');
   }, { passive: true });
 
-  // Sec2 — video-driven feature tabs
-  const items = document.querySelectorAll('.feature-item');
-  const videos = document.querySelectorAll('.sec2-video');
+  // ── Sec2: vertical animated text + video transitions ──
+  (function () {
+    const sec2El    = document.querySelector('.sec2');
+    const ipadDevice = document.querySelector('.ipad-device');
+    const slides    = Array.from(document.querySelectorAll('.sec2-slide'));
+    const videos    = Array.from(document.querySelectorAll('.sec2-video'));
+    let current   = 0;
+    let started   = false;
+    const SLIDE_DURATION = 500; // ms — matches CSS transition
 
-  function switchTo(idx) {
-    items.forEach((el, i) => el.classList.toggle('active', i === idx));
-    videos.forEach((v, i) => {
-      if (i === idx) {
+    function enterSlide(idx) {
+      slides[idx].classList.add('active');
+    }
+
+    function exitSlide(idx) {
+      slides[idx].classList.remove('active');
+      slides[idx].classList.add('exit');
+      // After exit finishes, reset silently (invisible, so no visible flash)
+      setTimeout(() => slides[idx].classList.remove('exit'), SLIDE_DURATION + 50);
+    }
+
+    function playVideo(idx, isFirst) {
+      const v = videos[idx];
+      v.currentTime = 0;
+      if (isFirst) {
+        // Zoom-in on the whole ipad-device (frame + video scale together), video fades in
+        ipadDevice.classList.add('zoom-enter');
+        ipadDevice.addEventListener('animationend', () => ipadDevice.classList.remove('zoom-enter'), { once: true });
         v.classList.add('active');
-        v.currentTime = 0;
         v.play();
       } else {
-        v.classList.remove('active');
-        v.pause();
-        v.currentTime = 0;
+        v.classList.add('active');
+        v.play();
       }
-    });
-  }
+    }
 
-  // Auto-advance on video end
-  videos.forEach((v, i) => {
-    v.addEventListener('ended', () => switchTo((i + 1) % videos.length));
-  });
+    function stopVideo(idx) {
+      const v = videos[idx];
+      v.classList.remove('active');
+      setTimeout(() => { v.pause(); v.currentTime = 0; }, 650);
+    }
 
-  // Click left panel to jump to that video
-  items.forEach((el, idx) => {
-    el.addEventListener('click', () => switchTo(idx));
-  });
+    function switchTo(nextIdx, isFirst) {
+      const prevIdx = current;
+      current = nextIdx;
 
-  // Kick off first video
-  switchTo(0);
+      if (!isFirst) {
+        exitSlide(prevIdx);
+        stopVideo(prevIdx);
+        // Slight delay so exit animation is visible before enter begins
+        setTimeout(() => { enterSlide(nextIdx); playVideo(nextIdx, false); }, 320);
+      } else {
+        enterSlide(nextIdx);
+        playVideo(nextIdx, true);
+      }
+
+      // Auto-advance when this video ends
+      videos[nextIdx].addEventListener('ended', () => {
+        switchTo((nextIdx + 1) % videos.length, false);
+      }, { once: true });
+    }
+
+    // Trigger when sec2 scrolls into view
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !started) {
+        started = true;
+        switchTo(0, true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.35 });
+    observer.observe(sec2El);
+  })();
 
   // Work dropdown (click-toggle for touch)
   const navWorkWrap = document.getElementById('navWorkWrap');
